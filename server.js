@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs').promises;
-const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -11,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// ========== DADOS EM MEMÓRIA (simulando banco de dados) ==========
+// ========== DADOS EM MEMÓRIA ==========
 
 let pacientes = [
     { 
@@ -133,114 +131,9 @@ function atualizarTotalPaciente(pacienteId, valor, operacao = 'adicionar') {
     }
 }
 
-// ========== NOVAS ROTAS PARA BACKUP ==========
+// ========== ROTAS DA API ==========
 
-// GET: Obter dados completos para backup
-app.get('/api/backup/exportar', (req, res) => {
-    const backupData = {
-        pacientes: pacientes,
-        recebimentos: recebimentos,
-        timestamp: new Date().toISOString(),
-        versao: '2.0.0',
-        totalPacientes: pacientes.length,
-        totalRecebimentos: recebimentos.length,
-        estatisticas: {
-            totalRecebido: recebimentos
-                .filter(r => r.status === 'pago')
-                .reduce((sum, r) => sum + r.valor, 0),
-            totalAberto: recebimentos
-                .filter(r => r.status === 'pendente')
-                .reduce((sum, r) => sum + r.valor, 0),
-            taxaPagamento: recebimentos.length > 0 
-                ? ((recebimentos.filter(r => r.status === 'pago').length / recebimentos.length) * 100).toFixed(1)
-                : 0
-        }
-    };
-    
-    res.json(backupData);
-});
-
-// POST: Restaurar dados de backup
-app.post('/api/backup/restaurar', (req, res) => {
-    const { pacientes: novosPacientes, recebimentos: novosRecebimentos } = req.body;
-    
-    if (!novosPacientes || !Array.isArray(novosPacientes) || 
-        !novosRecebimentos || !Array.isArray(novosRecebimentos)) {
-        return res.status(400).json({ error: 'Dados de backup inválidos' });
-    }
-    
-    try {
-        // Criar backup dos dados atuais antes de restaurar
-        const backupAntes = {
-            pacientes: [...pacientes],
-            recebimentos: [...recebimentos],
-            timestamp: new Date().toISOString()
-        };
-        
-        // Salvar backup anterior (opcional - em produção, salvaria em arquivo)
-        console.log('Backup anterior salvo:', backupAntes.timestamp);
-        
-        // Restaurar novos dados
-        pacientes = novosPacientes;
-        recebimentos = novosRecebimentos;
-        
-        // Ajustar IDs para evitar conflitos
-        pacientes.forEach((p, index) => { p.id = index + 1; });
-        recebimentos.forEach((r, index) => { r.id = index + 1; });
-        
-        res.json({
-            mensagem: 'Dados restaurados com sucesso',
-            estatisticas: {
-                pacientes: pacientes.length,
-                recebimentos: recebimentos.length
-            }
-        });
-        
-    } catch (error) {
-        console.error('Erro ao restaurar backup:', error);
-        res.status(500).json({ error: 'Erro interno ao restaurar backup' });
-    }
-});
-
-// POST: Criar backup manual
-app.post('/api/backup/criar', (req, res) => {
-    const backupId = 'backup_' + Date.now();
-    const backupData = {
-        id: backupId,
-        pacientes: pacientes,
-        recebimentos: recebimentos,
-        timestamp: new Date().toISOString(),
-        versao: '2.0.0'
-    };
-    
-    // Em produção, salvaria em arquivo ou banco de dados
-    // Aqui apenas retornamos os dados
-    res.json({
-        ...backupData,
-        mensagem: 'Backup criado com sucesso',
-        downloadUrl: `/api/backup/download/${backupId}`
-    });
-});
-
-// GET: Download de backup específico
-app.get('/api/backup/download/:id', (req, res) => {
-    const backupData = {
-        pacientes: pacientes,
-        recebimentos: recebimentos,
-        timestamp: new Date().toISOString(),
-        versao: '2.0.0'
-    };
-    
-    // Configurar headers para download
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename=backup_${req.params.id}.json`);
-    
-    res.send(JSON.stringify(backupData, null, 2));
-});
-
-// ========== ROTAS ORIGINAIS DA API ==========
-
-// Health Check atualizado
+// 1. HEALTH CHECK
 app.get('/api/health', (req, res) => {
     const totalRecebido = recebimentos
         .filter(r => r.status === 'pago')
@@ -271,7 +164,7 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Dashboard
+// 2. DASHBOARD
 app.get('/api/dashboard', (req, res) => {
     const totalRecebido = recebimentos
         .filter(r => r.status === 'pago')
@@ -306,7 +199,8 @@ app.get('/api/dashboard', (req, res) => {
     });
 });
 
-// Pacientes
+// 3. PACIENTES
+
 app.get('/api/pacientes', (req, res) => {
     res.json(pacientes);
 });
@@ -386,7 +280,8 @@ app.delete('/api/pacientes/:id', (req, res) => {
     });
 });
 
-// Recebimentos
+// 4. RECEBIMENTOS
+
 app.get('/api/recebimentos', (req, res) => {
     const { inicio, fim, status, pacienteId } = req.query;
     
@@ -501,6 +396,32 @@ app.delete('/api/recebimentos/:id', (req, res) => {
         mensagem: 'Recebimento excluído com sucesso',
         recebimentoExcluido: recebimento
     });
+});
+
+// 5. BACKUP
+
+app.get('/api/backup/exportar', (req, res) => {
+    const backupData = {
+        pacientes: pacientes,
+        recebimentos: recebimentos,
+        timestamp: new Date().toISOString(),
+        versao: '2.0.0',
+        totalPacientes: pacientes.length,
+        totalRecebimentos: recebimentos.length,
+        estatisticas: {
+            totalRecebido: recebimentos
+                .filter(r => r.status === 'pago')
+                .reduce((sum, r) => sum + r.valor, 0),
+            totalAberto: recebimentos
+                .filter(r => r.status === 'pendente')
+                .reduce((sum, r) => sum + r.valor, 0),
+            taxaPagamento: recebimentos.length > 0 
+                ? ((recebimentos.filter(r => r.status === 'pago').length / recebimentos.length) * 100).toFixed(1)
+                : 0
+        }
+    };
+    
+    res.json(backupData);
 });
 
 // Rota padrão para frontend
