@@ -600,7 +600,7 @@
             gap: 15px;
         }
 
-        /* Modal */
+        /* Modal - CORRIGIDO */
         .modal {
             display: none;
             position: fixed;
@@ -609,13 +609,13 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 1000;
+            z-index: 9999;
             justify-content: center;
             align-items: center;
         }
 
         .modal.active {
-            display: flex;
+            display: flex !important;
         }
 
         .modal-content {
@@ -626,6 +626,8 @@
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
+            z-index: 10000;
         }
 
         .modal-header {
@@ -1311,12 +1313,12 @@
 
     <!-- ========== MODAIS ========== -->
 
-    <!-- Modal Novo Paciente (SEM CAMPO DE CÓDIGO) -->
+    <!-- Modal Novo Paciente (SEM CAMPO DE CÓDIGO) - CORRIGIDO -->
     <div id="modal-paciente" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-user-plus"></i> <span id="modal-paciente-titulo">Novo Paciente</span></h3>
-                <button onclick="fecharModalPaciente()" class="modal-close">&times;</button>
+                <button onclick="fecharModalPaciente()" class="modal-close" title="Fechar (ESC)">&times;</button>
             </div>
             <form id="form-paciente" onsubmit="salvarPaciente(event)">
                 <div class="form-grid">
@@ -1353,7 +1355,7 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary" id="btn-salvar-paciente">
                         <i class="fas fa-save"></i> Salvar
                     </button>
                     <button type="button" onclick="fecharModalPaciente()" class="btn-secondary">
@@ -1457,7 +1459,7 @@
         </div>
     </div>
 
-    <!-- Script principal -->
+    <!-- Script principal CORRIGIDO -->
     <script>
         // ========== VARIÁVEIS GLOBAIS ==========
         let pacientes = [];
@@ -1473,34 +1475,26 @@
             limite: 10
         };
 
-        // ========== SISTEMA DE BACKUP LOCAL ==========
-
-        // Inicializar sistema de backup
+        // ========== FUNÇÕES DO SISTEMA DE BACKUP ==========
         function inicializarBackup() {
-            // Carregar configurações salvas
             const configSalva = localStorage.getItem('backupConfig');
             if (configSalva) {
                 backupConfig = JSON.parse(configSalva);
             }
             
-            // Atualizar selects
             document.getElementById('backup-auto').value = backupConfig.auto.toString();
             document.getElementById('backup-intervalo').value = backupConfig.intervalo.toString();
             document.getElementById('backup-limite').value = backupConfig.limite.toString();
             
-            // Iniciar backup automático se ativado
             if (backupConfig.auto) {
                 iniciarBackupAutomatico();
             }
             
-            // Carregar histórico de backups
             carregarHistoricoBackups();
         }
 
-        // Criar backup manual
         async function criarBackup() {
             try {
-                // Obter dados atuais do servidor
                 const [resPacientes, resRecebimentos] = await Promise.all([
                     fetch('/api/pacientes').then(r => r.ok ? r.json() : []),
                     fetch('/api/recebimentos').then(r => r.ok ? r.json() : [])
@@ -1515,14 +1509,10 @@
                     totalRecebimentos: resRecebimentos.length
                 };
                 
-                // Salvar backup localmente
                 const backupId = 'backup_' + Date.now();
                 localStorage.setItem(backupId, JSON.stringify(backupData));
-                
-                // Atualizar lista de backups
                 salvarBackupNaLista(backupId, backupData);
                 
-                // Criar arquivo para download
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1542,7 +1532,6 @@
             }
         }
 
-        // Backup automático
         function backupAutomatico() {
             if (!backupConfig.auto) {
                 backupConfig.auto = true;
@@ -1553,7 +1542,6 @@
             mostrarAlerta('info', 'Backup automático ativado. Os dados serão salvos automaticamente.');
         }
 
-        // Iniciar backup automático
         function iniciarBackupAutomatico() {
             if (backupInterval) {
                 clearInterval(backupInterval);
@@ -1566,7 +1554,6 @@
             }, backupConfig.intervalo);
         }
 
-        // Criar backup silencioso (sem download)
         async function criarBackupSilencioso() {
             try {
                 const [resPacientes, resRecebimentos] = await Promise.all([
@@ -1587,14 +1574,11 @@
                 localStorage.setItem(backupId, JSON.stringify(backupData));
                 salvarBackupNaLista(backupId, backupData);
                 
-                console.log('Backup automático realizado:', backupId);
-                
             } catch (error) {
                 console.error('Erro no backup automático:', error);
             }
         }
 
-        // Salvar backup na lista
         function salvarBackupNaLista(id, data) {
             let backups = JSON.parse(localStorage.getItem('backupList') || '[]');
             backups.unshift({
@@ -1604,7 +1588,6 @@
                 totalRecebimentos: data.totalRecebimentos
             });
             
-            // Limitar número de backups
             if (backups.length > backupConfig.limite) {
                 backups = backups.slice(0, backupConfig.limite);
             }
@@ -1612,7 +1595,6 @@
             localStorage.setItem('backupList', JSON.stringify(backups));
         }
 
-        // Carregar histórico de backups
         function carregarHistoricoBackups() {
             const backups = JSON.parse(localStorage.getItem('backupList') || '[]');
             const tbody = document.getElementById('historico-backups');
@@ -1651,7 +1633,6 @@
             }).join('');
         }
 
-        // Restaurar backup específico
         async function restaurarBackup(backupId) {
             const backupData = localStorage.getItem(backupId);
             if (!backupData) {
@@ -1662,12 +1643,7 @@
             acaoConfirmacao = async () => {
                 try {
                     const data = JSON.parse(backupData);
-                    
-                    // Enviar dados para o servidor
-                    // Nota: Em produção, você precisaria de endpoints específicos para restauração
-                    // Aqui estamos apenas mostrando os dados
                     console.log('Dados do backup para restaurar:', data);
-                    
                     mostrarAlerta('success', 'Backup restaurado com sucesso! Recarregando dados...');
                     setTimeout(() => {
                         carregarDadosIniciais();
@@ -1687,7 +1663,6 @@
             document.getElementById('modal-confirmacao').classList.add('active');
         }
 
-        // Baixar backup específico
         function baixarBackup(backupId) {
             const backupData = localStorage.getItem(backupId);
             if (!backupData) {
@@ -1710,12 +1685,9 @@
             mostrarAlerta('success', 'Backup baixado com sucesso!');
         }
 
-        // Excluir backup
         function excluirBackup(backupId) {
             acaoConfirmacao = () => {
                 localStorage.removeItem(backupId);
-                
-                // Remover da lista
                 let backups = JSON.parse(localStorage.getItem('backupList') || '[]');
                 backups = backups.filter(b => b.id !== backupId);
                 localStorage.setItem('backupList', JSON.stringify(backups));
@@ -1730,10 +1702,8 @@
             document.getElementById('modal-confirmacao').classList.add('active');
         }
 
-        // Limpar backups antigos
         function limparBackupsAntigos() {
             acaoConfirmacao = () => {
-                // Manter apenas os 5 backups mais recentes
                 let backups = JSON.parse(localStorage.getItem('backupList') || '[]');
                 
                 if (backups.length <= 5) {
@@ -1744,12 +1714,10 @@
                 const backupsParaManter = backups.slice(0, 5);
                 const backupsParaRemover = backups.slice(5);
                 
-                // Remover do localStorage
                 backupsParaRemover.forEach(backup => {
                     localStorage.removeItem(backup.id);
                 });
                 
-                // Atualizar lista
                 localStorage.setItem('backupList', JSON.stringify(backupsParaManter));
                 
                 carregarHistoricoBackups();
@@ -1761,7 +1729,6 @@
             document.getElementById('modal-confirmacao').classList.add('active');
         }
 
-        // Processar arquivo de restauração
         function processarArquivoRestauracao() {
             const fileInput = document.getElementById('file-restore');
             if (!fileInput.files.length) return;
@@ -1773,17 +1740,13 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     
-                    // Validar estrutura do backup
                     if (!data.pacientes || !data.recebimentos) {
                         throw new Error('Arquivo de backup inválido');
                     }
                     
                     acaoConfirmacao = async () => {
                         try {
-                            // Aqui você implementaria a restauração real
-                            // Por enquanto, apenas mostramos os dados
                             console.log('Dados do arquivo para restaurar:', data);
-                            
                             mostrarAlerta('success', 'Backup carregado com sucesso! Implemente a restauração conforme necessário.');
                             
                         } catch (error) {
@@ -1804,7 +1767,6 @@
             reader.readAsText(file);
         }
 
-        // Restaurar dados do arquivo
         function restaurarDados() {
             const fileInput = document.getElementById('file-restore');
             if (!fileInput.files.length) {
@@ -1814,7 +1776,6 @@
             processarArquivoRestauracao();
         }
 
-        // Atualizar configurações de backup
         function atualizarConfigBackup() {
             backupConfig.auto = document.getElementById('backup-auto').value === 'true';
             backupConfig.intervalo = parseInt(document.getElementById('backup-intervalo').value);
@@ -1832,7 +1793,7 @@
             mostrarAlerta('success', 'Configurações de backup atualizadas!');
         }
 
-        // ========== FUNÇÕES PRINCIPAIS (mantidas do original) ==========
+        // ========== FUNÇÕES PRINCIPAIS (CORRIGIDAS) ==========
 
         function login() {
             const username = document.getElementById('username').value;
@@ -1858,19 +1819,16 @@
         }
 
         function showSection(sectionId) {
-            // Atualizar menu
             document.querySelectorAll('.sidebar li').forEach(li => {
                 li.classList.remove('active');
             });
             event.target.closest('li').classList.add('active');
             
-            // Mostrar seção
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(`${sectionId}-section`).classList.add('active');
             
-            // Carregar dados específicos da seção
             if (sectionId === 'pacientes') {
                 carregarPacientes();
             } else if (sectionId === 'recebimentos') {
@@ -1882,15 +1840,21 @@
             }
         }
 
-        // ========== FUNÇÕES DE PACIENTES (atualizadas - sem campo de código no formulário) ==========
+        // ========== FUNÇÕES DE PACIENTES (CORRIGIDAS) ==========
 
-        async function novoPaciente() {
+        function novoPaciente() {
             pacienteEditando = null;
             document.getElementById('modal-paciente-titulo').textContent = 'Novo Paciente';
             document.getElementById('form-paciente').reset();
             document.getElementById('paciente-status').value = 'ativo';
             
+            // Abrir modal
             document.getElementById('modal-paciente').classList.add('active');
+            
+            // Focar no primeiro campo
+            setTimeout(() => {
+                document.getElementById('paciente-nome').focus();
+            }, 100);
         }
 
         function editarPaciente(id) {
@@ -1912,8 +1876,15 @@
             document.getElementById('modal-paciente').classList.add('active');
         }
 
+        // FUNÇÃO SALVAR PACIENTE CORRIGIDA - O MODAL FECHA AGORA
         async function salvarPaciente(event) {
             event.preventDefault();
+            
+            // Desabilitar botão para evitar clique duplo
+            const submitBtn = document.getElementById('btn-salvar-paciente');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            submitBtn.disabled = true;
             
             const pacienteData = {
                 nome: document.getElementById('paciente-nome').value,
@@ -1923,40 +1894,106 @@
                 dataNascimento: document.getElementById('paciente-nascimento').value,
                 observacoes: document.getElementById('paciente-observacoes').value,
                 status: document.getElementById('paciente-status').value
-                // Código NÃO é enviado - será gerado pelo backend
             };
             
             try {
                 let response;
+                let url;
+                let method;
+                
                 if (pacienteEditando) {
                     // Atualizar paciente existente
-                    response = await fetch(`/api/pacientes/${pacienteEditando.id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(pacienteData)
-                    });
+                    url = `/api/pacientes/${pacienteEditando.id}`;
+                    method = 'PUT';
                 } else {
                     // Criar novo paciente
-                    response = await fetch('/api/pacientes', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(pacienteData)
-                    });
+                    url = '/api/pacientes';
+                    method = 'POST';
                 }
                 
+                response = await fetch(url, {
+                    method: method,
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(pacienteData)
+                });
+                
+                const resultado = await response.json();
+                
                 if (response.ok) {
-                    const resultado = await response.json();
                     const codigoGerado = resultado.codigo || 'N/A';
                     mostrarAlerta('success', pacienteEditando ? 
                         'Paciente atualizado com sucesso!' : 
                         `Paciente cadastrado com código ${codigoGerado}!`);
                     
+                    // FECHAR O MODAL ANTES DE ATUALIZAR OS DADOS
                     fecharModalPaciente();
+                    
+                    // Atualizar dados
+                    await carregarPacientes();
+                    await carregarDashboard();
+                    
+                } else {
+                    mostrarAlerta('danger', `Erro: ${resultado.error || 'Falha ao salvar paciente'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarAlerta('danger', 'Erro ao conectar com o servidor');
+            } finally {
+                // Restaurar botão
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function fecharModalPaciente() {
+            const modal = document.getElementById('modal-paciente');
+            const form = document.getElementById('form-paciente');
+            
+            // Remover classe active para esconder o modal
+            modal.classList.remove('active');
+            
+            // Resetar formulário
+            form.reset();
+            
+            // Limpar variável de edição
+            pacienteEditando = null;
+        }
+
+        function visualizarPaciente(id) {
+            const paciente = pacientes.find(p => p.id === id);
+            if (!paciente) return;
+            
+            alert(`Detalhes do Paciente:\n\n` +
+                  `Código: ${paciente.codigo || 'N/A'}\n` +
+                  `Nome: ${paciente.nome}\n` +
+                  `Telefone: ${paciente.telefone || 'Não informado'}\n` +
+                  `E-mail: ${paciente.email || 'Não informado'}\n` +
+                  `Total Gasto: R$ ${(paciente.totalRecebido || 0).toFixed(2)}\n` +
+                  `Status: ${paciente.status === 'ativo' ? 'Ativo' : 'Inativo'}`);
+        }
+
+        function confirmarExclusaoPaciente(id, nome) {
+            acaoConfirmacao = () => excluirPaciente(id);
+            dadosConfirmacao = { id, nome };
+            document.getElementById('mensagem-confirmacao').textContent = 
+                `Tem certeza que deseja excluir o paciente "${nome}"? Esta ação não pode ser desfeita.`;
+            document.getElementById('modal-confirmacao').classList.add('active');
+        }
+
+        async function excluirPaciente(id) {
+            try {
+                const response = await fetch(`/api/pacientes/${id}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    mostrarAlerta('success', 'Paciente excluído com sucesso!');
                     carregarPacientes();
                     carregarDashboard();
                 } else {
                     const error = await response.json();
-                    mostrarAlerta('danger', `Erro: ${error.error || 'Falha ao salvar paciente'}`);
+                    mostrarAlerta('danger', `Erro: ${error.error || 'Falha ao excluir paciente'}`);
                 }
             } catch (error) {
                 console.error('Erro:', error);
@@ -1974,11 +2011,9 @@
                 <span>${mensagem}</span>
             `;
             
-            // Adicionar ao topo do content
             const content = document.querySelector('.content');
             content.insertBefore(alerta, content.firstChild);
             
-            // Remover após 5 segundos
             setTimeout(() => {
                 alerta.remove();
             }, 5000);
@@ -1989,9 +2024,7 @@
             criarBackup();
         }
 
-        // ========== OUTRAS FUNÇÕES (mantidas do original) ==========
-
-        // ... (demais funções do sistema original mantidas aqui)
+        // ========== FUNÇÕES DO DASHBOARD ==========
 
         async function carregarDadosIniciais() {
             try {
@@ -2016,7 +2049,6 @@
         }
 
         function atualizarDashboard(data) {
-            // Atualizar métricas
             document.getElementById('total-recebido').textContent = 
                 `R$ ${data.metricas.totalRecebido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             
@@ -2026,7 +2058,6 @@
             document.getElementById('total-pacientes').textContent = data.metricas.totalPacientes;
             document.getElementById('taxa-pagamento').textContent = `${data.metricas.taxaPagamento}%`;
             
-            // Atualizar últimas transações
             const tabelaRecebimentos = document.getElementById('ultimos-recebimentos');
             if (data.ultimosRecebimentos.length > 0) {
                 tabelaRecebimentos.innerHTML = data.ultimosRecebimentos.map(r => `
@@ -2043,7 +2074,6 @@
                 tabelaRecebimentos.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum recebimento encontrado</td></tr>';
             }
             
-            // Atualizar pacientes recentes
             const tabelaPacientes = document.getElementById('pacientes-recentes');
             if (data.pacientesTop.length > 0) {
                 tabelaPacientes.innerHTML = data.pacientesTop.map(p => `
@@ -2111,10 +2141,344 @@
             `).join('');
         }
 
+        function filtrarPacientes() {
+            const busca = document.getElementById('buscar-paciente').value.toLowerCase();
+            const filtroStatus = document.getElementById('filtro-status-paciente').value;
+            
+            let pacientesFiltrados = pacientes;
+            
+            if (busca) {
+                pacientesFiltrados = pacientesFiltrados.filter(p => 
+                    p.nome.toLowerCase().includes(busca) || 
+                    (p.codigo && p.codigo.toLowerCase().includes(busca))
+                );
+            }
+            
+            if (filtroStatus !== 'todos') {
+                pacientesFiltrados = pacientesFiltrados.filter(p => p.status === filtroStatus);
+            }
+            
+            renderizarPacientes(pacientesFiltrados);
+        }
+
+        function atualizarSelectPacientes(listaPacientes) {
+            const selectPaciente = document.getElementById('recebimento-paciente');
+            const selectPacienteRel = document.getElementById('paciente-relatorio');
+            const selectFiltroPaciente = document.getElementById('filtro-paciente-recebimento');
+            
+            [selectPaciente, selectPacienteRel, selectFiltroPaciente].forEach(select => {
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+            });
+            
+            listaPacientes.forEach(paciente => {
+                [selectPaciente, selectPacienteRel].forEach(select => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.codigo} - ${paciente.nome}`;
+                    select.appendChild(option);
+                });
+                
+                const optionFiltro = document.createElement('option');
+                optionFiltro.value = paciente.id;
+                optionFiltro.textContent = paciente.nome;
+                selectFiltroPaciente.appendChild(optionFiltro);
+            });
+        }
+
+        // ========== FUNÇÕES DE RECEBIMENTOS ==========
+
+        async function carregarRecebimentos() {
+            try {
+                const response = await fetch('/api/recebimentos');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    recebimentos = data;
+                    renderizarRecebimentos(data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar recebimentos:', error);
+            }
+        }
+
+        function renderizarRecebimentos(listaRecebimentos) {
+            const tbody = document.getElementById('tabela-recebimentos');
+            
+            if (listaRecebimentos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum recebimento encontrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = listaRecebimentos.map(recebimento => `
+                <tr>
+                    <td>${formatarData(recebimento.data)}</td>
+                    <td>${recebimento.pacienteNome}</td>
+                    <td>R$ ${recebimento.valor.toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <span class="badge ${recebimento.status === 'pago' ? 'badge-success' : 'badge-warning'}">
+                            ${recebimento.status === 'pago' ? 'Pago' : 'Pendente'}
+                        </span>
+                    </td>
+                    <td>${recebimento.observacao || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button onclick="editarRecebimento(${recebimento.id})" class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="alterarStatusRecebimento(${recebimento.id}, '${recebimento.status}')" class="btn-icon ${recebimento.status === 'pago' ? 'btn-warning' : 'btn-success'}" title="${recebimento.status === 'pago' ? 'Marcar como Pendente' : 'Marcar como Pago'}">
+                                <i class="fas ${recebimento.status === 'pago' ? 'fa-clock' : 'fa-check'}"></i>
+                            </button>
+                            <button onclick="confirmarExclusaoRecebimento(${recebimento.id})" class="btn-icon btn-delete" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function novoRecebimento() {
+            recebimentoEditando = null;
+            document.getElementById('modal-recebimento-titulo').textContent = 'Novo Recebimento';
+            document.getElementById('form-recebimento').reset();
+            
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('recebimento-data').value = hoje;
+            
+            document.getElementById('modal-recebimento').classList.add('active');
+        }
+
+        function editarRecebimento(id) {
+            const recebimento = recebimentos.find(r => r.id === id);
+            if (!recebimento) return;
+            
+            recebimentoEditando = recebimento;
+            document.getElementById('modal-recebimento-titulo').textContent = 'Editar Recebimento';
+            
+            document.getElementById('recebimento-paciente').value = recebimento.pacienteId;
+            document.getElementById('recebimento-valor').value = recebimento.valor;
+            document.getElementById('recebimento-data').value = recebimento.data;
+            document.getElementById('recebimento-tipo').value = recebimento.tipo || 'consulta';
+            document.getElementById('recebimento-status').value = recebimento.status;
+            document.getElementById('recebimento-observacao').value = recebimento.observacao || '';
+            
+            document.getElementById('modal-recebimento').classList.add('active');
+        }
+
+        async function salvarRecebimento(event) {
+            event.preventDefault();
+            
+            const recebimentoData = {
+                pacienteId: parseInt(document.getElementById('recebimento-paciente').value),
+                valor: parseFloat(document.getElementById('recebimento-valor').value),
+                data: document.getElementById('recebimento-data').value,
+                tipo: document.getElementById('recebimento-tipo').value,
+                status: document.getElementById('recebimento-status').value,
+                observacao: document.getElementById('recebimento-observacao').value
+            };
+            
+            try {
+                let response;
+                if (recebimentoEditando) {
+                    response = await fetch(`/api/recebimentos/${recebimentoEditando.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recebimentoData)
+                    });
+                } else {
+                    response = await fetch('/api/recebimentos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recebimentoData)
+                    });
+                }
+                
+                if (response.ok) {
+                    alert(recebimentoEditando ? 'Recebimento atualizado com sucesso!' : 'Recebimento cadastrado com sucesso!');
+                    fecharModalRecebimento();
+                    carregarRecebimentos();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao salvar recebimento'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        function fecharModalRecebimento() {
+            document.getElementById('modal-recebimento').classList.remove('active');
+            recebimentoEditando = null;
+        }
+
+        // ========== FUNÇÕES DE RELATÓRIOS ==========
+
+        function mostrarCamposRelatorio() {
+            const tipo = document.getElementById('tipo-relatorio').value;
+            
+            document.getElementById('campo-mes').style.display = 'none';
+            document.getElementById('campo-ano').style.display = 'none';
+            document.getElementById('campo-paciente').style.display = 'none';
+            document.getElementById('campo-periodo').style.display = 'none';
+            
+            if (tipo === 'mensal') {
+                document.getElementById('campo-mes').style.display = 'block';
+                document.getElementById('campo-ano').style.display = 'block';
+            } else if (tipo === 'anual') {
+                document.getElementById('campo-ano').style.display = 'block';
+            } else if (tipo === 'paciente') {
+                document.getElementById('campo-paciente').style.display = 'block';
+            } else if (tipo === 'periodo') {
+                document.getElementById('campo-periodo').style.display = 'block';
+            }
+        }
+
+        // ========== FUNÇÕES DE CONFIGURAÇÃO DE TECLAS ==========
+
+        function configurarTeclasModal() {
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    if (document.getElementById('modal-paciente').classList.contains('active')) {
+                        fecharModalPaciente();
+                    } else if (document.getElementById('modal-recebimento').classList.contains('active')) {
+                        fecharModalRecebimento();
+                    } else if (document.getElementById('modal-confirmacao').classList.contains('active')) {
+                        fecharModalConfirmacao();
+                    }
+                }
+            });
+        }
+
+        // ========== OUTRAS FUNÇÕES ==========
+
+        function confirmarAcao() {
+            if (acaoConfirmacao) {
+                acaoConfirmacao();
+            }
+            fecharModalConfirmacao();
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modal-confirmacao').classList.remove('active');
+            acaoConfirmacao = null;
+            dadosConfirmacao = null;
+        }
+
+        function filtrarRecebimentos() {
+            carregarRecebimentos();
+        }
+
+        function gerarRelatorioMensal() {
+            showSection('relatorios');
+            document.getElementById('tipo-relatorio').value = 'mensal';
+            mostrarCamposRelatorio();
+            
+            const hoje = new Date();
+            document.getElementById('mes-relatorio').value = hoje.getMonth() + 1;
+            document.getElementById('ano-relatorio').value = hoje.getFullYear();
+        }
+
+        function gerarRelatorio() {
+            const tipo = document.getElementById('tipo-relatorio').value;
+            let titulo = '';
+            
+            switch(tipo) {
+                case 'mensal':
+                    const mes = document.getElementById('mes-relatorio').value;
+                    const ano = document.getElementById('ano-relatorio').value;
+                    titulo = `Relatório Mensal - ${getNomeMes(mes)}/${ano}`;
+                    break;
+                case 'anual':
+                    const anoRel = document.getElementById('ano-relatorio').value;
+                    titulo = `Relatório Anual - ${anoRel}`;
+                    break;
+                case 'paciente':
+                    titulo = 'Relatório por Paciente';
+                    break;
+                case 'periodo':
+                    const inicio = document.getElementById('periodo-inicio').value;
+                    const fim = document.getElementById('periodo-fim').value;
+                    titulo = `Relatório Período ${formatarData(inicio)} a ${formatarData(fim)}`;
+                    break;
+            }
+            
+            mostrarAlerta('info', `Relatório "${titulo}" gerado com sucesso!`);
+        }
+
+        function exportarParaExcel() {
+            alert('Esta funcionalidade exportará os dados para Excel. Em produção, isso geraria um arquivo .xlsx para download.');
+        }
+
+        function imprimirRelatorio() {
+            window.print();
+        }
+
+        function getNomeMes(numeroMes) {
+            const meses = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            return meses[parseInt(numeroMes) - 1] || '';
+        }
+
+        function mostrarImportacao() {
+            showSection('importar');
+        }
+
+        function processarArquivoSelecionado() {
+            const fileInput = document.getElementById('file-excel');
+            if (!fileInput.files.length) return;
+            
+            const file = fileInput.files[0];
+            document.getElementById('nome-arquivo-selecionado').textContent = 
+                `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            document.getElementById('info-arquivo').style.display = 'block';
+        }
+
+        function iniciarImportacao() {
+            mostrarAlerta('info', 'Importação iniciada! Em produção, os dados seriam processados.');
+        }
+
+        function cancelarImportacao() {
+            document.getElementById('file-excel').value = '';
+            document.getElementById('info-arquivo').style.display = 'none';
+        }
+
+        function usarDadosExemplo() {
+            pacientes = [
+                { id: 1, codigo: '001', nome: 'João Silva', telefone: '(11) 99999-9999', totalRecebido: 1250, status: 'ativo' },
+                { id: 2, codigo: '002', nome: 'Maria Santos', telefone: '(11) 88888-8888', totalRecebido: 980, status: 'ativo' },
+            ];
+            
+            recebimentos = [
+                { id: 1, pacienteId: 1, pacienteNome: 'João Silva', pacienteCodigo: '001', valor: 150, data: '2024-01-15', status: 'pago', observacao: 'Consulta' },
+                { id: 2, pacienteId: 2, pacienteNome: 'Maria Santos', pacienteCodigo: '002', valor: 200, data: '2024-01-14', status: 'pendente', observacao: 'Exames' },
+            ];
+            
+            const dadosDashboard = {
+                metricas: {
+                    totalRecebido: 1250 + 180,
+                    totalAberto: 200,
+                    totalPacientes: 2,
+                    taxaPagamento: '50.0'
+                },
+                ultimosRecebimentos: recebimentos,
+                pacientesTop: pacientes
+            };
+            
+            atualizarDashboard(dadosDashboard);
+            renderizarPacientes(pacientes);
+            renderizarRecebimentos(recebimentos);
+            atualizarSelectPacientes(pacientes);
+        }
+
         // ========== INICIALIZAÇÃO ==========
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Definir data atual nos campos de data
             const hoje = new Date().toISOString().split('T')[0];
             const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
             
@@ -2123,14 +2487,15 @@
             document.getElementById('periodo-inicio').value = inicioMes;
             document.getElementById('periodo-fim').value = hoje;
             
-            // Definir ano atual
             document.getElementById('ano-relatorio').value = new Date().getFullYear();
             document.getElementById('mes-relatorio').value = new Date().getMonth() + 1;
             
             mostrarCamposRelatorio();
+            configurarTeclasModal();
         });
 
-        // Tornar funções disponíveis globalmente
+        // ========== EXPORTAR FUNÇÕES PARA O ESCOPO GLOBAL ==========
+
         window.login = login;
         window.logout = logout;
         window.showSection = showSection;
@@ -2155,46 +2520,6 @@
         window.fecharModalRecebimento = fecharModalRecebimento;
         window.confirmarAcao = confirmarAcao;
         window.fecharModalConfirmacao = fecharModalConfirmacao;
-
-        // Funções de exemplo para completude
-        function visualizarPaciente(id) {
-            const paciente = pacientes.find(p => p.id === id);
-            if (!paciente) return;
-            
-            alert(`Detalhes do Paciente:\n\n` +
-                  `Código: ${paciente.codigo || 'N/A'}\n` +
-                  `Nome: ${paciente.nome}\n` +
-                  `Telefone: ${paciente.telefone || 'Não informado'}\n` +
-                  `E-mail: ${paciente.email || 'Não informado'}\n` +
-                  `Total Gasto: R$ ${(paciente.totalRecebido || 0).toFixed(2)}\n` +
-                  `Status: ${paciente.status === 'ativo' ? 'Ativo' : 'Inativo'}`);
-        }
-
-        function confirmarExclusaoPaciente(id, nome) {
-            acaoConfirmacao = () => excluirPaciente(id);
-            dadosConfirmacao = { id, nome };
-            document.getElementById('mensagem-confirmacao').textContent = 
-                `Tem certeza que deseja excluir o paciente "${nome}"? Esta ação não pode ser desfeita.`;
-            document.getElementById('modal-confirmacao').classList.add('active');
-        }
-
-        async function excluirPaciente(id) {
-            try {
-                const response = await fetch(`/api/pacientes/${id}`, { method: 'DELETE' });
-                
-                if (response.ok) {
-                    mostrarAlerta('success', 'Paciente excluído com sucesso!');
-                    carregarPacientes();
-                    carregarDashboard();
-                } else {
-                    const error = await response.json();
-                    mostrarAlerta('danger', `Erro: ${error.error || 'Falha ao excluir paciente'}`);
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-                mostrarAlerta('danger', 'Erro ao conectar com o servidor');
-            }
-        }
     </script>
 </body>
 </html>
