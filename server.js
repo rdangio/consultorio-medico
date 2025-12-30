@@ -14,7 +14,7 @@ app.use(express.static(__dirname));
 let pacientes = [
     { 
         id: 1, 
-        codigo: '001', 
+        codigo: 'PAC001', 
         nome: 'João Silva', 
         telefone: '(11) 99999-9999', 
         email: 'joao@email.com',
@@ -27,7 +27,7 @@ let pacientes = [
     },
     { 
         id: 2, 
-        codigo: '002', 
+        codigo: 'PAC002', 
         nome: 'Maria Santos', 
         telefone: '(11) 88888-8888', 
         email: 'maria@email.com',
@@ -40,7 +40,7 @@ let pacientes = [
     },
     { 
         id: 3, 
-        codigo: '003', 
+        codigo: 'PAC003', 
         nome: 'Carlos Oliveira', 
         telefone: '(11) 77777-7777', 
         email: 'carlos@email.com',
@@ -53,7 +53,7 @@ let pacientes = [
     },
     { 
         id: 4, 
-        codigo: '004', 
+        codigo: 'PAC004', 
         nome: 'Ana Costa', 
         telefone: '(11) 66666-6666', 
         email: 'ana@email.com',
@@ -66,7 +66,7 @@ let pacientes = [
     },
     { 
         id: 5, 
-        codigo: '005', 
+        codigo: 'PAC005', 
         nome: 'Pedro Alves', 
         telefone: '(11) 55555-5555', 
         email: 'pedro@email.com',
@@ -84,6 +84,7 @@ let recebimentos = [
         id: 1, 
         pacienteId: 1, 
         pacienteNome: 'João Silva',
+        pacienteCodigo: 'PAC001',
         valor: 150.00, 
         data: '2024-01-15', 
         mes: 1,
@@ -96,6 +97,7 @@ let recebimentos = [
         id: 2, 
         pacienteId: 2, 
         pacienteNome: 'Maria Santos',
+        pacienteCodigo: 'PAC002',
         valor: 200.00, 
         data: '2024-01-14', 
         mes: 1,
@@ -108,6 +110,7 @@ let recebimentos = [
         id: 3, 
         pacienteId: 3, 
         pacienteNome: 'Carlos Oliveira',
+        pacienteCodigo: 'PAC003',
         valor: 180.00, 
         data: '2024-01-13', 
         mes: 1,
@@ -120,6 +123,7 @@ let recebimentos = [
         id: 4, 
         pacienteId: 1, 
         pacienteNome: 'João Silva',
+        pacienteCodigo: 'PAC001',
         valor: 300.00, 
         data: '2024-01-10', 
         mes: 1,
@@ -132,6 +136,7 @@ let recebimentos = [
         id: 5, 
         pacienteId: 4, 
         pacienteNome: 'Ana Costa',
+        pacienteCodigo: 'PAC004',
         valor: 120.00, 
         data: '2024-01-09', 
         mes: 1,
@@ -144,6 +149,7 @@ let recebimentos = [
         id: 6, 
         pacienteId: 5, 
         pacienteNome: 'Pedro Alves',
+        pacienteCodigo: 'PAC005',
         valor: 500.00, 
         data: '2024-01-08', 
         mes: 1,
@@ -156,6 +162,7 @@ let recebimentos = [
         id: 7, 
         pacienteId: 2, 
         pacienteNome: 'Maria Santos',
+        pacienteCodigo: 'PAC002',
         valor: 150.00, 
         data: '2023-12-20', 
         mes: 12,
@@ -170,6 +177,30 @@ let recebimentos = [
 
 function gerarProximoId(lista) {
     return lista.length > 0 ? Math.max(...lista.map(item => item.id)) + 1 : 1;
+}
+
+function gerarProximoCodigoPaciente() {
+    if (pacientes.length === 0) {
+        return 'PAC001';
+    }
+    
+    // Extrai todos os números dos códigos existentes
+    const codigosNumericos = pacientes
+        .map(p => {
+            // Remove "PAC" do início e converte para número
+            const numeroStr = p.codigo.replace('PAC', '');
+            return parseInt(numeroStr, 10);
+        })
+        .filter(num => !isNaN(num));
+    
+    // Encontra o maior número
+    const maiorNumero = Math.max(...codigosNumericos);
+    
+    // Gera o próximo código com padding de zeros
+    const proximoNumero = maiorNumero + 1;
+    const proximoCodigo = 'PAC' + proximoNumero.toString().padStart(3, '0');
+    
+    return proximoCodigo;
 }
 
 function atualizarTotalPaciente(pacienteId, valor, operacao = 'adicionar') {
@@ -188,6 +219,10 @@ function formatarDataBR(dataString) {
     return data.toLocaleDateString('pt-BR');
 }
 
+function buscarPacientePorId(id) {
+    return pacientes.find(p => p.id === id);
+}
+
 // ========== ROTAS DA API ==========
 
 // 1. HEALTH CHECK
@@ -200,11 +235,14 @@ app.get('/api/health', (req, res) => {
         .filter(r => r.status === 'pendente')
         .reduce((sum, r) => sum + r.valor, 0);
     
+    const proximoCodigo = gerarProximoCodigoPaciente();
+    
     res.json({
         status: 'online',
         timestamp: new Date().toISOString(),
         sistema: 'Consultório Financeiro',
         versao: '2.0.0',
+        proximoCodigoDisponivel: proximoCodigo,
         estatisticas: {
             totalPacientes: pacientes.length,
             totalRecebimentos: recebimentos.length,
@@ -237,6 +275,8 @@ app.get('/api/dashboard', (req, res) => {
         .sort((a, b) => b.totalRecebido - a.totalRecebido)
         .slice(0, 5);
     
+    const proximoCodigo = gerarProximoCodigoPaciente();
+    
     res.json({
         metricas: {
             totalRecebido: totalRecebido,
@@ -247,7 +287,8 @@ app.get('/api/dashboard', (req, res) => {
                 : 0
         },
         ultimosRecebimentos: ultimosRecebimentos,
-        pacientesTop: pacientesTop
+        pacientesTop: pacientesTop,
+        proximoCodigoDisponivel: proximoCodigo
     });
 });
 
@@ -267,19 +308,45 @@ app.get('/api/pacientes/:id', (req, res) => {
     res.json(paciente);
 });
 
+// GET: Buscar paciente por código
+app.get('/api/pacientes/codigo/:codigo', (req, res) => {
+    const paciente = pacientes.find(p => p.codigo === req.params.codigo.toUpperCase());
+    if (!paciente) {
+        return res.status(404).json({ error: 'Paciente não encontrado' });
+    }
+    res.json(paciente);
+});
+
+// GET: Próximo código disponível
+app.get('/api/pacientes/proximo-codigo', (req, res) => {
+    const proximoCodigo = gerarProximoCodigoPaciente();
+    res.json({ proximoCodigo });
+});
+
 // POST: Criar novo paciente
 app.post('/api/pacientes', (req, res) => {
+    // Gerar código automaticamente
+    const proximoCodigo = gerarProximoCodigoPaciente();
+    
     const novoPaciente = {
         id: gerarProximoId(pacientes),
-        codigo: `00${pacientes.length + 1}`,
+        codigo: proximoCodigo,
         ...req.body,
         totalRecebido: 0,
         status: 'ativo',
         dataCadastro: new Date().toISOString().split('T')[0]
     };
     
+    // Validar campos obrigatórios
+    if (!novoPaciente.nome || !novoPaciente.telefone) {
+        return res.status(400).json({ error: 'Nome e telefone são obrigatórios' });
+    }
+    
     pacientes.push(novoPaciente);
-    res.status(201).json(novoPaciente);
+    res.status(201).json({
+        ...novoPaciente,
+        mensagem: `Paciente cadastrado com código ${proximoCodigo}`
+    });
 });
 
 // PUT: Atualizar paciente
@@ -291,13 +358,20 @@ app.put('/api/pacientes/:id', (req, res) => {
         return res.status(404).json({ error: 'Paciente não encontrado' });
     }
     
+    // Não permite alterar o código do paciente
+    const { codigo, ...dadosAtualizacao } = req.body;
+    
     pacientes[index] = { 
         ...pacientes[index], 
-        ...req.body,
-        id: id // Garantir que o ID não seja alterado
+        ...dadosAtualizacao,
+        id: id, // Garantir que o ID não seja alterado
+        codigo: pacientes[index].codigo // Manter o código original
     };
     
-    res.json(pacientes[index]);
+    res.json({
+        ...pacientes[index],
+        mensagem: 'Paciente atualizado com sucesso'
+    });
 });
 
 // DELETE: Excluir paciente
@@ -317,15 +391,20 @@ app.delete('/api/pacientes/:id', (req, res) => {
         });
     }
     
+    const pacienteRemovido = pacientes[index];
     pacientes.splice(index, 1);
-    res.status(204).send();
+    
+    res.json({
+        mensagem: `Paciente ${pacienteRemovido.codigo} - ${pacienteRemovido.nome} removido com sucesso`,
+        paciente: pacienteRemovido
+    });
 });
 
 // 4. RECEBIMENTOS
 
 // GET: Listar todos os recebimentos
 app.get('/api/recebimentos', (req, res) => {
-    const { inicio, fim, status, pacienteId } = req.query;
+    const { inicio, fim, status, pacienteId, pacienteCodigo } = req.query;
     
     let recebimentosFiltrados = [...recebimentos];
     
@@ -344,9 +423,17 @@ app.get('/api/recebimentos', (req, res) => {
         recebimentosFiltrados = recebimentosFiltrados.filter(r => r.status === status);
     }
     
-    // Filtrar por paciente
+    // Filtrar por paciente ID
     if (pacienteId && pacienteId !== 'todos') {
         recebimentosFiltrados = recebimentosFiltrados.filter(r => r.pacienteId === parseInt(pacienteId));
+    }
+    
+    // Filtrar por paciente código
+    if (pacienteCodigo && pacienteCodigo !== 'todos') {
+        const paciente = pacientes.find(p => p.codigo === pacienteCodigo.toUpperCase());
+        if (paciente) {
+            recebimentosFiltrados = recebimentosFiltrados.filter(r => r.pacienteId === paciente.id);
+        }
     }
     
     // Ordenar por data (mais recente primeiro)
@@ -374,12 +461,18 @@ app.post('/api/recebimentos', (req, res) => {
     const novoRecebimento = {
         id: gerarProximoId(recebimentos),
         pacienteNome: paciente.nome,
+        pacienteCodigo: paciente.codigo,
         ...req.body,
         data: req.body.data || new Date().toISOString().split('T')[0],
         mes: req.body.mes || new Date().getMonth() + 1,
         ano: req.body.ano || new Date().getFullYear(),
         tipo: req.body.tipo || 'consulta'
     };
+    
+    // Validações
+    if (!novoRecebimento.valor || novoRecebimento.valor <= 0) {
+        return res.status(400).json({ error: 'Valor inválido' });
+    }
     
     recebimentos.push(novoRecebimento);
     
@@ -388,7 +481,10 @@ app.post('/api/recebimentos', (req, res) => {
         atualizarTotalPaciente(novoRecebimento.pacienteId, novoRecebimento.valor, 'adicionar');
     }
     
-    res.status(201).json(novoRecebimento);
+    res.status(201).json({
+        ...novoRecebimento,
+        mensagem: `Recebimento registrado para ${paciente.codigo} - ${paciente.nome}`
+    });
 });
 
 // PUT: Atualizar recebimento
@@ -424,7 +520,10 @@ app.put('/api/recebimentos/:id', (req, res) => {
     }
     
     recebimentos[index] = novoRecebimento;
-    res.json(novoRecebimento);
+    res.json({
+        ...novoRecebimento,
+        mensagem: 'Recebimento atualizado com sucesso'
+    });
 });
 
 // PUT: Alterar status do recebimento
@@ -449,7 +548,10 @@ app.put('/api/recebimentos/:id/status', (req, res) => {
     }
     
     recebimento.status = novoStatus;
-    res.json(recebimento);
+    res.json({
+        ...recebimento,
+        mensagem: `Status alterado para ${novoStatus}`
+    });
 });
 
 // DELETE: Excluir recebimento
@@ -469,13 +571,17 @@ app.delete('/api/recebimentos/:id', (req, res) => {
     }
     
     recebimentos.splice(index, 1);
-    res.status(204).send();
+    
+    res.json({
+        mensagem: 'Recebimento excluído com sucesso',
+        recebimentoExcluido: recebimento
+    });
 });
 
 // 5. RELATÓRIOS
 
 app.get('/api/relatorios', (req, res) => {
-    const { tipo, mes, ano, pacienteId, inicio, fim } = req.query;
+    const { tipo, mes, ano, pacienteId, pacienteCodigo, inicio, fim } = req.query;
     
     let recebimentosFiltrados = [...recebimentos];
     let titulo = 'Relatório';
@@ -500,7 +606,15 @@ app.get('/api/relatorios', (req, res) => {
         recebimentosFiltrados = recebimentosFiltrados.filter(r => r.pacienteId === parseInt(pacienteId));
         const paciente = pacientes.find(p => p.id === parseInt(pacienteId));
         titulo = `Relatório do Paciente - ${paciente ? paciente.nome : 'N/A'}`;
-        periodo = paciente ? `Paciente: ${paciente.nome}` : '';
+        periodo = paciente ? `Paciente: ${paciente.nome} (${paciente.codigo})` : '';
+    }
+    else if (tipo === 'paciente-codigo' && pacienteCodigo) {
+        const paciente = pacientes.find(p => p.codigo === pacienteCodigo.toUpperCase());
+        if (paciente) {
+            recebimentosFiltrados = recebimentosFiltrados.filter(r => r.pacienteId === paciente.id);
+            titulo = `Relatório do Paciente - ${paciente.nome}`;
+            periodo = `Paciente: ${paciente.nome} (${paciente.codigo})`;
+        }
     }
     else if (tipo === 'periodo' && inicio && fim) {
         recebimentosFiltrados = recebimentosFiltrados.filter(r => {
@@ -549,17 +663,17 @@ app.get('/api/relatorios', (req, res) => {
     
     // Agrupar por paciente (top 5)
     const porPaciente = recebimentosFiltrados.reduce((acc, r) => {
-        if (!acc[r.pacienteNome]) {
-            acc[r.pacienteNome] = { total: 0, quantidade: 0 };
+        const chave = `${r.pacienteCodigo} - ${r.pacienteNome}`;
+        if (!acc[chave]) {
+            acc[chave] = { codigo: r.pacienteCodigo, nome: r.pacienteNome, total: 0, quantidade: 0 };
         }
-        acc[r.pacienteNome].total += r.valor;
-        acc[r.pacienteNome].quantidade += 1;
+        acc[chave].total += r.valor;
+        acc[chave].quantidade += 1;
         return acc;
     }, {});
     
     // Converter para array e ordenar
-    const topPacientes = Object.entries(porPaciente)
-        .map(([nome, dados]) => ({ nome, ...dados }))
+    const topPacientes = Object.values(porPaciente)
         .sort((a, b) => b.total - a.total)
         .slice(0, 5);
     
@@ -591,7 +705,10 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`URL: http://localhost:${PORT}`);
-    console.log(`API Health: http://localhost:${PORT}/api/health`);
+    console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    console.log(`🔗 URL: http://localhost:${PORT}`);
+    console.log(`📊 API Health: http://localhost:${PORT}/api/health`);
+    console.log(`👥 Total de pacientes: ${pacientes.length}`);
+    console.log(`💰 Total de recebimentos: ${recebimentos.length}`);
+    console.log(`📝 Próximo código disponível: ${gerarProximoCodigoPaciente()}`);
 });
