@@ -233,7 +233,7 @@ app.post('/api/pacientes', (req, res) => {
     });
 });
 
-app.put('/api/pacientes/:id', (req, res) => {
+app.put('/api/pacientes/:id', (req, res) {
     const id = parseInt(req.params.id);
     const index = pacientes.findIndex(p => p.id === id);
     
@@ -256,6 +256,7 @@ app.put('/api/pacientes/:id', (req, res) => {
     });
 });
 
+// DELETE: Excluir paciente - CORRIGIDO para excluir recebimentos vinculados primeiro
 app.delete('/api/pacientes/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const index = pacientes.findIndex(p => p.id === id);
@@ -264,19 +265,19 @@ app.delete('/api/pacientes/:id', (req, res) => {
         return res.status(404).json({ error: 'Paciente não encontrado' });
     }
     
+    // Encontrar e excluir todos os recebimentos vinculados a este paciente
     const recebimentosPaciente = recebimentos.filter(r => r.pacienteId === id);
-    if (recebimentosPaciente.length > 0) {
-        return res.status(400).json({ 
-            error: 'Não é possível excluir paciente com recebimentos vinculados' 
-        });
-    }
+    
+    // Remover recebimentos vinculados
+    recebimentos = recebimentos.filter(r => r.pacienteId !== id);
     
     const pacienteRemovido = pacientes[index];
     pacientes.splice(index, 1);
     
     res.json({
-        mensagem: `Paciente ${pacienteRemovido.codigo} - ${pacienteRemovido.nome} removido com sucesso`,
-        paciente: pacienteRemovido
+        mensagem: `Paciente ${pacienteRemovido.codigo} - ${pacienteRemovido.nome} removido com sucesso. ${recebimentosPaciente.length} recebimento(s) vinculado(s) também foram removido(s).`,
+        paciente: pacienteRemovido,
+        recebimentosRemovidos: recebimentosPaciente.length
     });
 });
 
@@ -439,4 +440,5 @@ app.listen(PORT, () => {
     console.log(`👥 Total de pacientes: ${pacientes.length}`);
     console.log(`💰 Total de recebimentos: ${recebimentos.length}`);
     console.log(`🔐 Próximo código disponível: ${gerarProximoCodigoPaciente()}`);
+    console.log(`✅ Exclusão de pacientes corrigida: Agora remove recebimentos vinculados automaticamente`);
 });
