@@ -11,29 +11,25 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Runtime
-*.pid
-*.seed
-*.pid.lock
-
-# Diretórios de build
-dist/
-build/
-
-# Configurações do editor
-.vscode/
-.idea/
-*.swp
-*.swo
+# Backups locais
+backups/
+*.backup
+*.json.backup
 
 # Sistema operacional
 .DS_Store
 Thumbs.db
 
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
 # Logs
-logs
+logs/
 *.log
 
-# Temporários
-*.tmp
-*.temp
+# Arquivos temporários
+tmp/
+temp/
