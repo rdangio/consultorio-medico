@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Consultório Financeiro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
@@ -60,25 +61,31 @@
 
         .input-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
         }
 
-        .input-group input {
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
             width: 100%;
-            padding: 15px;
+            padding: 15px 15px 15px 45px;
             border: 2px solid #ddd;
             border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s;
         }
 
-        .input-group input:focus {
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
@@ -182,6 +189,7 @@
             width: 250px;
             background: #f8f9fa;
             padding: 20px;
+            border-right: 1px solid #e9ecef;
         }
 
         .sidebar ul {
@@ -213,6 +221,8 @@
         .content {
             flex: 1;
             padding: 30px;
+            overflow-y: auto;
+            max-height: 600px;
         }
 
         .section {
@@ -231,6 +241,238 @@
             gap: 10px;
         }
 
+        /* Botões de ação */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        /* Formulários */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-header h3 {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tabelas */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 2px solid #f0f0f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Ações na tabela */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-edit {
+            color: #007bff;
+        }
+
+        .btn-delete {
+            color: #dc3545;
+        }
+
+        .btn-view {
+            color: #28a745;
+        }
+
+        /* Métricas */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -288,6 +530,7 @@
             color: #4caf50;
         }
 
+        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -295,62 +538,7 @@
             margin-bottom: 30px;
         }
 
-        .card {
-            background: white;
-            border: 2px solid #f0f0f0;
-            border-radius: 15px;
-            padding: 25px;
-        }
-
-        .card h3 {
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            color: #666;
-            font-weight: 600;
-            border-bottom: 2px solid #eee;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-
-        tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status.pago {
-            background: #e8f5e9;
-            color: #388e3c;
-        }
-
-        .status.pendente {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
+        /* Quick Actions */
         .quick-actions {
             background: white;
             border: 2px solid #f0f0f0;
@@ -388,6 +576,62 @@
             font-size: 24px;
         }
 
+        /* Filtros */
+        .filters {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
         /* Responsivo */
         @media (max-width: 768px) {
             .container {
@@ -406,6 +650,17 @@
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .content {
+                max-height: none;
+                overflow-y: visible;
+            }
         }
 
         @media (max-width: 480px) {
@@ -413,10 +668,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
+            .form-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -432,12 +685,12 @@
             </div>
             
             <div class="input-group">
-                <label for="username"><i class="fas fa-user"></i> Usuário</label>
+                <i class="fas fa-user"></i>
                 <input type="text" id="username" placeholder="Digite seu usuário" value="admin">
             </div>
             
             <div class="input-group">
-                <label for="password"><i class="fas fa-lock"></i> Senha</label>
+                <i class="fas fa-lock"></i>
                 <input type="password" id="password" placeholder="Digite sua senha" value="admin">
             </div>
             
@@ -490,7 +743,7 @@
             </nav>
             
             <main class="content">
-                <!-- Dashboard -->
+                <!-- ========== DASHBOARD ========== -->
                 <section id="dashboard-section" class="section active">
                     <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
                     
@@ -501,8 +754,8 @@
                             </div>
                             <div class="metric-info">
                                 <h3>Total Recebido</h3>
-                                <p class="metric-value" id="total-recebido">R$ 12.847,50</p>
-                                <p class="metric-change">+5% este mês</p>
+                                <p class="metric-value" id="total-recebido">R$ 0,00</p>
+                                <p class="metric-change">Carregando...</p>
                             </div>
                         </div>
                         
@@ -512,8 +765,8 @@
                             </div>
                             <div class="metric-info">
                                 <h3>Em Aberto</h3>
-                                <p class="metric-value" id="total-aberto">R$ 3.125,00</p>
-                                <p class="metric-change">8 recebimentos</p>
+                                <p class="metric-value" id="total-aberto">R$ 0,00</p>
+                                <p class="metric-change">Carregando...</p>
                             </div>
                         </div>
                         
@@ -523,8 +776,8 @@
                             </div>
                             <div class="metric-info">
                                 <h3>Pacientes Ativos</h3>
-                                <p class="metric-value" id="total-pacientes">42</p>
-                                <p class="metric-change">+2 este mês</p>
+                                <p class="metric-value" id="total-pacientes">0</p>
+                                <p class="metric-change">Carregando...</p>
                             </div>
                         </div>
                         
@@ -534,45 +787,55 @@
                             </div>
                             <div class="metric-info">
                                 <h3>Taxa de Pagamento</h3>
-                                <p class="metric-value" id="taxa-pagamento">86%</p>
-                                <p class="metric-change">Excelente</p>
+                                <p class="metric-value" id="taxa-pagamento">0%</p>
+                                <p class="metric-change">Carregando...</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="dashboard-grid">
                         <div class="card">
-                            <h3><i class="fas fa-history"></i> Últimos Recebimentos</h3>
-                            <div style="overflow-x: auto;">
+                            <div class="card-header">
+                                <h3><i class="fas fa-history"></i> Últimos Recebimentos</h3>
+                                <button onclick="showSection('recebimentos')" class="btn-primary">
+                                    <i class="fas fa-plus"></i> Novo
+                                </button>
+                            </div>
+                            <div class="table-container">
                                 <table>
                                     <thead>
                                         <tr>
+                                            <th>Data</th>
                                             <th>Paciente</th>
                                             <th>Valor</th>
-                                            <th>Data</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ultimos-recebimentos">
-                                        <!-- JavaScript preenche -->
+                                        <tr><td colspan="4" style="text-align: center;">Carregando...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         
                         <div class="card">
-                            <h3><i class="fas fa-user-friends"></i> Pacientes Recentes</h3>
-                            <div style="overflow-x: auto;">
+                            <div class="card-header">
+                                <h3><i class="fas fa-user-friends"></i> Pacientes Recentes</h3>
+                                <button onclick="showSection('pacientes')" class="btn-primary">
+                                    <i class="fas fa-plus"></i> Novo
+                                </button>
+                            </div>
+                            <div class="table-container">
                                 <table>
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
                                             <th>Total Gasto</th>
-                                            <th>Última Visita</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody id="pacientes-recentes">
-                                        <!-- JavaScript preenche -->
+                                        <tr><td colspan="3" style="text-align: center;">Carregando...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -582,67 +845,463 @@
                     <div class="quick-actions">
                         <h3><i class="fas fa-bolt"></i> Ações Rápidas</h3>
                         <div class="actions-grid">
-                            <button onclick="showSection('pacientes')" class="action-btn">
+                            <button onclick="novoPaciente()" class="action-btn">
                                 <i class="fas fa-user-plus"></i>
                                 <span>Novo Paciente</span>
                             </button>
-                            <button onclick="showSection('recebimentos')" class="action-btn">
+                            <button onclick="novoRecebimento()" class="action-btn">
                                 <i class="fas fa-money-bill"></i>
                                 <span>Novo Recebimento</span>
                             </button>
-                            <button onclick="showSection('importar')" class="action-btn">
-                                <i class="fas fa-file-import"></i>
-                                <span>Importar Excel</span>
-                            </button>
-                            <button onclick="gerarRelatorio()" class="action-btn">
+                            <button onclick="gerarRelatorioMensal()" class="action-btn">
                                 <i class="fas fa-file-pdf"></i>
-                                <span>Gerar Relatório</span>
+                                <span>Relatório Mensal</span>
+                            </button>
+                            <button onclick="mostrarImportacao()" class="action-btn">
+                                <i class="fas fa-file-import"></i>
+                                <span>Importar Dados</span>
                             </button>
                         </div>
                     </div>
                 </section>
-                
-                <!-- Outras seções serão adicionadas aqui -->
+
+                <!-- ========== PACIENTES ========== -->
                 <section id="pacientes-section" class="section">
-                    <h1><i class="fas fa-users"></i> Pacientes</h1>
-                    <p>Em construção...</p>
+                    <h1><i class="fas fa-users"></i> Gerenciar Pacientes</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> Lista de Pacientes</h3>
+                            <button onclick="novoPaciente()" class="btn-primary">
+                                <i class="fas fa-plus"></i> Novo Paciente
+                            </button>
+                        </div>
+                        
+                        <div class="filters">
+                            <div class="form-group">
+                                <label><i class="fas fa-search"></i> Buscar</label>
+                                <input type="text" id="buscar-paciente" class="form-control" placeholder="Nome ou código..." onkeyup="filtrarPacientes()">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-filter"></i> Status</label>
+                                <select id="filtro-status-paciente" class="form-control" onchange="filtrarPacientes()">
+                                    <option value="todos">Todos</option>
+                                    <option value="ativo">Ativos</option>
+                                    <option value="inativo">Inativos</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nome</th>
+                                        <th>Telefone</th>
+                                        <th>Total Gasto</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-pacientes">
+                                    <tr><td colspan="6" style="text-align: center;">Carregando pacientes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
-                
+
+                <!-- ========== RECEBIMENTOS ========== -->
                 <section id="recebimentos-section" class="section">
                     <h1><i class="fas fa-money-bill-wave"></i> Recebimentos</h1>
-                    <p>Em construção...</p>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-list"></i> Lançamentos</h3>
+                            <button onclick="novoRecebimento()" class="btn-primary">
+                                <i class="fas fa-plus"></i> Novo Recebimento
+                            </button>
+                        </div>
+                        
+                        <div class="filters">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Período</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="date" id="data-inicio" class="form-control" style="flex: 1;">
+                                    <input type="date" id="data-fim" class="form-control" style="flex: 1;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-filter"></i> Status</label>
+                                <select id="filtro-status-recebimento" class="form-control" onchange="filtrarRecebimentos()">
+                                    <option value="todos">Todos</option>
+                                    <option value="pago">Pagos</option>
+                                    <option value="pendente">Pendentes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Paciente</label>
+                                <select id="filtro-paciente-recebimento" class="form-control" onchange="filtrarRecebimentos()">
+                                    <option value="todos">Todos os pacientes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button onclick="filtrarRecebimentos()" class="btn-primary" style="margin-top: 25px;">
+                                    <i class="fas fa-filter"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Paciente</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Observação</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-recebimentos">
+                                    <tr><td colspan="6" style="text-align: center;">Carregando recebimentos...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
-                
+
+                <!-- ========== RELATÓRIOS ========== -->
                 <section id="relatorios-section" class="section">
                     <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
-                    <p>Em construção...</p>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cogs"></i> Gerar Relatório</h3>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar-alt"></i> Tipo de Relatório</label>
+                                <select id="tipo-relatorio" class="form-control" onchange="mostrarCamposRelatorio()">
+                                    <option value="mensal">Mensal</option>
+                                    <option value="anual">Anual</option>
+                                    <option value="paciente">Por Paciente</option>
+                                    <option value="periodo">Por Período</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="campo-mes">
+                                <label><i class="fas fa-calendar"></i> Mês</label>
+                                <select id="mes-relatorio" class="form-control">
+                                    <option value="1">Janeiro</option>
+                                    <option value="2">Fevereiro</option>
+                                    <option value="3">Março</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Maio</option>
+                                    <option value="6">Junho</option>
+                                    <option value="7">Julho</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="campo-ano" style="display: none;">
+                                <label><i class="fas fa-calendar"></i> Ano</label>
+                                <select id="ano-relatorio" class="form-control">
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="campo-paciente" style="display: none;">
+                                <label><i class="fas fa-user"></i> Paciente</label>
+                                <select id="paciente-relatorio" class="form-control">
+                                    <option value="">Selecione um paciente</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="campo-periodo" style="display: none;">
+                                <label><i class="fas fa-calendar-day"></i> Período</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="date" id="periodo-inicio" class="form-control" style="flex: 1;" placeholder="Início">
+                                    <input type="date" id="periodo-fim" class="form-control" style="flex: 1;" placeholder="Fim">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button onclick="gerarRelatorio()" class="btn-primary">
+                                <i class="fas fa-chart-line"></i> Gerar Relatório
+                            </button>
+                            <button onclick="exportarParaExcel()" class="btn-success">
+                                <i class="fas fa-file-excel"></i> Exportar Excel
+                            </button>
+                            <button onclick="imprimirRelatorio()" class="btn-secondary">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                        </div>
+                        
+                        <div id="resultado-relatorio" style="margin-top: 30px; display: none;">
+                            <!-- Resultados do relatório aparecem aqui -->
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-pie"></i> Gráficos</h3>
+                        </div>
+                        <div id="graficos-container" style="padding: 20px; text-align: center;">
+                            <p>Selecione um relatório para visualizar os gráficos</p>
+                        </div>
+                    </div>
                 </section>
-                
+
+                <!-- ========== IMPORTAR EXCEL ========== -->
                 <section id="importar-section" class="section">
-                    <h1><i class="fas fa-file-import"></i> Importar Excel</h1>
-                    <p>Em construção...</p>
+                    <h1><i class="fas fa-file-import"></i> Importar do Excel</h1>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-upload"></i> Upload da Planilha</h3>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 40px; border: 2px dashed #667eea; border-radius: 10px; margin: 20px 0; background: #f8f9fa;">
+                            <i class="fas fa-file-excel" style="font-size: 60px; color: #667eea; margin-bottom: 20px;"></i>
+                            <h3 style="color: #333; margin-bottom: 10px;">Arraste sua planilha aqui</h3>
+                            <p style="color: #666; margin-bottom: 20px;">ou clique para selecionar do computador</p>
+                            
+                            <input type="file" id="file-excel" accept=".xlsx,.xls,.csv" style="display: none;" onchange="processarArquivoSelecionado()">
+                            <button onclick="document.getElementById('file-excel').click()" class="btn-primary" style="padding: 15px 30px;">
+                                <i class="fas fa-folder-open"></i> Selecionar Arquivo
+                            </button>
+                        </div>
+                        
+                        <div id="info-arquivo" style="display: none; background: #e8f5e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4><i class="fas fa-check-circle"></i> Arquivo Selecionado</h4>
+                            <p id="nome-arquivo-selecionado" style="margin: 10px 0;"></p>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button onclick="iniciarImportacao()" class="btn-success">
+                                    <i class="fas fa-play"></i> Iniciar Importação
+                                </button>
+                                <button onclick="cancelarImportacao()" class="btn-secondary">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="status-importacao" style="display: none;">
+                            <!-- Status da importação -->
+                        </div>
+                        
+                        <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                            <h4><i class="fas fa-info-circle"></i> Instruções de Importação</h4>
+                            <ul style="color: #333; line-height: 1.8; margin-top: 10px;">
+                                <li><strong>Formato da planilha:</strong> Similar à sua planilha original "Consultório.xlsx"</li>
+                                <li><strong>Colunas necessárias:</strong> Código, Nome, valores por mês (Jan, Fev, Mar, etc.)</li>
+                                <li><strong>Formatos suportados:</strong> .xlsx, .xls, .csv</li>
+                                <li><strong>Tamanho máximo:</strong> 10MB</li>
+                                <li>O sistema irá detectar automaticamente os dados e estruturá-los corretamente</li>
+                                <li>Antes de importar, é recomendado fazer um backup dos dados atuais</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: 20px;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Histórico de Importações</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Arquivo</th>
+                                        <th>Registros</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historico-importacoes">
+                                    <tr><td colspan="5" style="text-align: center;">Nenhuma importação realizada</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
     </div>
 
-    <script>
-        // Dados de exemplo
-        const pacientesExemplo = [
-            { id: 1, nome: "João Silva", total: 1250, ultimaVisita: "15/01/2024" },
-            { id: 2, nome: "Maria Santos", total: 980, ultimaVisita: "14/01/2024" },
-            { id: 3, nome: "Carlos Oliveira", total: 1520, ultimaVisita: "13/01/2024" },
-            { id: 4, nome: "Ana Costa", total: 750, ultimaVisita: "12/01/2024" },
-            { id: 5, nome: "Pedro Alves", total: 2100, ultimaVisita: "11/01/2024" }
-        ];
+    <!-- ========== MODAIS ========== -->
 
-        const recebimentosExemplo = [
-            { id: 1, paciente: "João Silva", valor: 150, data: "15/01/2024", status: "pago" },
-            { id: 2, paciente: "Maria Santos", valor: 200, data: "14/01/2024", status: "pendente" },
-            { id: 3, paciente: "Carlos Oliveira", valor: 180, data: "13/01/2024", status: "pago" },
-            { id: 4, paciente: "Ana Costa", valor: 220, data: "12/01/2024", status: "pago" },
-            { id: 5, paciente: "Pedro Alves", valor: 300, data: "11/01/2024", status: "pendente" }
-        ];
+    <!-- Modal Novo Paciente -->
+    <div id="modal-paciente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> <span id="modal-paciente-titulo">Novo Paciente</span></h3>
+                <button onclick="fecharModalPaciente()" class="modal-close">&times;</button>
+            </div>
+            <form id="form-paciente" onsubmit="salvarPaciente(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> Código *</label>
+                        <input type="text" id="paciente-codigo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Nome Completo *</label>
+                        <input type="text" id="paciente-nome" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Telefone</label>
+                        <input type="tel" id="paciente-telefone" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> E-mail</label>
+                        <input type="email" id="paciente-email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Endereço</label>
+                        <input type="text" id="paciente-endereco" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Data de Nascimento</label>
+                        <input type="date" id="paciente-nascimento" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-notes-medical"></i> Observações</label>
+                        <textarea id="paciente-observacoes" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status</label>
+                        <select id="paciente-status" class="form-control">
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button type="button" onclick="fecharModalPaciente()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Novo Recebimento -->
+    <div id="modal-recebimento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-money-bill-wave"></i> <span id="modal-recebimento-titulo">Novo Recebimento</span></h3>
+                <button onclick="fecharModalRecebimento()" class="modal-close">&times;</button>
+            </div>
+            <form id="form-recebimento" onsubmit="salvarRecebimento(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Paciente *</label>
+                        <select id="recebimento-paciente" class="form-control" required>
+                            <option value="">Selecione um paciente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-dollar-sign"></i> Valor (R$) *</label>
+                        <input type="number" id="recebimento-valor" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Data *</label>
+                        <input type="date" id="recebimento-data" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Tipo</label>
+                        <select id="recebimento-tipo" class="form-control">
+                            <option value="consulta">Consulta</option>
+                            <option value="exame">Exame</option>
+                            <option value="cirurgia">Cirurgia</option>
+                            <option value="retorno">Retorno</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-circle"></i> Status *</label>
+                        <select id="recebimento-status" class="form-control" required>
+                            <option value="pago">Pago</option>
+                            <option value="pendente">Pendente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Observação</label>
+                        <textarea id="recebimento-observacao" class="form-control" rows="3" placeholder="Detalhes sobre o recebimento..."></textarea>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                    <button type="button" onclick="fecharModalRecebimento()" class="btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Confirmação -->
+    <div id="modal-confirmacao" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirmação</h3>
+                <button onclick="fecharModalConfirmacao()" class="modal-close">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <p id="mensagem-confirmacao">Tem certeza que deseja realizar esta ação?</p>
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button onclick="confirmarAcao()" class="btn-danger" style="flex: 1;">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                    <button onclick="fecharModalConfirmacao()" class="btn-secondary" style="flex: 1;">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Relatório -->
+    <div id="modal-relatorio" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Relatório Detalhado</h3>
+                <button onclick="fecharModalRelatorio()" class="modal-close">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <div id="conteudo-relatorio">
+                    <!-- Conteúdo do relatório será inserido aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script principal -->
+    <script>
+        // Variáveis globais
+        let pacientes = [];
+        let recebimentos = [];
+        let acaoConfirmacao = null;
+        let dadosConfirmacao = null;
+        let pacienteEditando = null;
+        let recebimentoEditando = null;
+
+        // ========== FUNÇÕES PRINCIPAIS ==========
 
         function login() {
             const username = document.getElementById('username').value;
@@ -651,7 +1310,7 @@
             if (username === 'admin' && password === 'admin') {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-screen').style.display = 'block';
-                atualizarDashboard();
+                carregarDadosIniciais();
             } else {
                 alert('Usuário ou senha incorretos! Use: admin / admin');
             }
@@ -674,67 +1333,842 @@
                 section.classList.remove('active');
             });
             document.getElementById(`${sectionId}-section`).classList.add('active');
+            
+            // Carregar dados específicos da seção
+            if (sectionId === 'pacientes') {
+                carregarPacientes();
+            } else if (sectionId === 'recebimentos') {
+                carregarRecebimentos();
+            } else if (sectionId === 'dashboard') {
+                carregarDashboard();
+            }
         }
 
-        function atualizarDashboard() {
-            // Calcular totais
-            let totalRecebido = 0;
-            let totalAberto = 0;
-            
-            recebimentosExemplo.forEach(r => {
-                if (r.status === 'pago') {
-                    totalRecebido += r.valor;
+        // ========== DASHBOARD ==========
+
+        async function carregarDadosIniciais() {
+            try {
+                const response = await fetch('/api/dashboard');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    atualizarDashboard(data);
                 } else {
-                    totalAberto += r.valor;
+                    console.error('Erro ao carregar dashboard:', data);
                 }
-            });
-            
+            } catch (error) {
+                console.error('Erro na conexão:', error);
+                // Usar dados de exemplo
+                usarDadosExemplo();
+            }
+        }
+
+        async function carregarDashboard() {
+            try {
+                const response = await fetch('/api/dashboard');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    atualizarDashboard(data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+
+        function atualizarDashboard(data) {
             // Atualizar métricas
             document.getElementById('total-recebido').textContent = 
-                `R$ ${totalRecebido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                `R$ ${data.metricas.totalRecebido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             
             document.getElementById('total-aberto').textContent = 
-                `R$ ${totalAberto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                `R$ ${data.metricas.totalAberto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             
-            document.getElementById('total-pacientes').textContent = pacientesExemplo.length;
+            document.getElementById('total-pacientes').textContent = data.metricas.totalPacientes;
+            document.getElementById('taxa-pagamento').textContent = `${data.metricas.taxaPagamento}%`;
             
-            const taxaPagamento = recebimentosExemplo.length > 0 
-                ? ((recebimentosExemplo.filter(r => r.status === 'pago').length / recebimentosExemplo.length) * 100).toFixed(0)
-                : 0;
-            document.getElementById('taxa-pagamento').textContent = `${taxaPagamento}%`;
-            
-            // Atualizar tabela de recebimentos
+            // Atualizar últimas transações
             const tabelaRecebimentos = document.getElementById('ultimos-recebimentos');
-            tabelaRecebimentos.innerHTML = recebimentosExemplo.map(r => `
-                <tr>
-                    <td>${r.paciente}</td>
-                    <td>R$ ${r.valor.toFixed(2).replace('.', ',')}</td>
-                    <td>${r.data}</td>
-                    <td><span class="status ${r.status}">${r.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
-                </tr>
-            `).join('');
+            if (data.ultimosRecebimentos.length > 0) {
+                tabelaRecebimentos.innerHTML = data.ultimosRecebimentos.map(r => `
+                    <tr>
+                        <td>${formatarData(r.data)}</td>
+                        <td>${r.pacienteNome}</td>
+                        <td>R$ ${r.valor.toFixed(2).replace('.', ',')}</td>
+                        <td><span class="badge ${r.status === 'pago' ? 'badge-success' : 'badge-warning'}">
+                            ${r.status === 'pago' ? 'Pago' : 'Pendente'}
+                        </span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tabelaRecebimentos.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum recebimento encontrado</td></tr>';
+            }
             
-            // Atualizar tabela de pacientes
+            // Atualizar pacientes recentes
             const tabelaPacientes = document.getElementById('pacientes-recentes');
-            tabelaPacientes.innerHTML = pacientesExemplo.map(p => `
+            if (data.pacientesTop.length > 0) {
+                tabelaPacientes.innerHTML = data.pacientesTop.map(p => `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>R$ ${p.totalRecebido.toFixed(2).replace('.', ',')}</td>
+                        <td><span class="badge ${p.status === 'ativo' ? 'badge-success' : 'badge-danger'}">
+                            ${p.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                        </span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tabelaPacientes.innerHTML = '<tr><td colspan="3" style="text-align: center;">Nenhum paciente encontrado</td></tr>';
+            }
+        }
+
+        // ========== PACIENTES ==========
+
+        async function carregarPacientes() {
+            try {
+                const response = await fetch('/api/pacientes');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    pacientes = data;
+                    renderizarPacientes(data);
+                    atualizarSelectPacientes(data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar pacientes:', error);
+            }
+        }
+
+        function renderizarPacientes(listaPacientes) {
+            const tbody = document.getElementById('tabela-pacientes');
+            
+            if (listaPacientes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum paciente cadastrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = listaPacientes.map(paciente => `
                 <tr>
-                    <td>${p.nome}</td>
-                    <td>R$ ${p.total.toFixed(2).replace('.', ',')}</td>
-                    <td>${p.ultimaVisita}</td>
+                    <td>${paciente.codigo || 'N/A'}</td>
+                    <td>${paciente.nome}</td>
+                    <td>${paciente.telefone || 'Não informado'}</td>
+                    <td>R$ ${(paciente.totalRecebido || 0).toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <span class="badge ${paciente.status === 'ativo' ? 'badge-success' : 'badge-danger'}">
+                            ${paciente.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button onclick="editarPaciente(${paciente.id})" class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="visualizarPaciente(${paciente.id})" class="btn-icon btn-view" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="confirmarExclusaoPaciente(${paciente.id}, '${paciente.nome}')" class="btn-icon btn-delete" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
             `).join('');
+        }
+
+        function filtrarPacientes() {
+            const busca = document.getElementById('buscar-paciente').value.toLowerCase();
+            const filtroStatus = document.getElementById('filtro-status-paciente').value;
+            
+            let pacientesFiltrados = pacientes;
+            
+            // Filtrar por busca
+            if (busca) {
+                pacientesFiltrados = pacientesFiltrados.filter(p => 
+                    p.nome.toLowerCase().includes(busca) || 
+                    (p.codigo && p.codigo.toLowerCase().includes(busca))
+                );
+            }
+            
+            // Filtrar por status
+            if (filtroStatus !== 'todos') {
+                pacientesFiltrados = pacientesFiltrados.filter(p => p.status === filtroStatus);
+            }
+            
+            renderizarPacientes(pacientesFiltrados);
+        }
+
+        function novoPaciente() {
+            pacienteEditando = null;
+            document.getElementById('modal-paciente-titulo').textContent = 'Novo Paciente';
+            document.getElementById('form-paciente').reset();
+            document.getElementById('modal-paciente').classList.add('active');
+        }
+
+        function editarPaciente(id) {
+            const paciente = pacientes.find(p => p.id === id);
+            if (!paciente) return;
+            
+            pacienteEditando = paciente;
+            document.getElementById('modal-paciente-titulo').textContent = 'Editar Paciente';
+            
+            // Preencher formulário
+            document.getElementById('paciente-codigo').value = paciente.codigo || '';
+            document.getElementById('paciente-nome').value = paciente.nome;
+            document.getElementById('paciente-telefone').value = paciente.telefone || '';
+            document.getElementById('paciente-email').value = paciente.email || '';
+            document.getElementById('paciente-endereco').value = paciente.endereco || '';
+            document.getElementById('paciente-nascimento').value = paciente.dataNascimento || '';
+            document.getElementById('paciente-observacoes').value = paciente.observacoes || '';
+            document.getElementById('paciente-status').value = paciente.status || 'ativo';
+            
+            document.getElementById('modal-paciente').classList.add('active');
+        }
+
+        function visualizarPaciente(id) {
+            const paciente = pacientes.find(p => p.id === id);
+            if (!paciente) return;
+            
+            alert(`Detalhes do Paciente:\n\n` +
+                  `Código: ${paciente.codigo || 'N/A'}\n` +
+                  `Nome: ${paciente.nome}\n` +
+                  `Telefone: ${paciente.telefone || 'Não informado'}\n` +
+                  `E-mail: ${paciente.email || 'Não informado'}\n` +
+                  `Total Gasto: R$ ${(paciente.totalRecebido || 0).toFixed(2)}\n` +
+                  `Status: ${paciente.status === 'ativo' ? 'Ativo' : 'Inativo'}\n` +
+                  `Data de Cadastro: ${paciente.dataCadastro || 'N/A'}`);
+        }
+
+        async function salvarPaciente(event) {
+            event.preventDefault();
+            
+            const pacienteData = {
+                codigo: document.getElementById('paciente-codigo').value,
+                nome: document.getElementById('paciente-nome').value,
+                telefone: document.getElementById('paciente-telefone').value,
+                email: document.getElementById('paciente-email').value,
+                endereco: document.getElementById('paciente-endereco').value,
+                dataNascimento: document.getElementById('paciente-nascimento').value,
+                observacoes: document.getElementById('paciente-observacoes').value,
+                status: document.getElementById('paciente-status').value
+            };
+            
+            try {
+                let response;
+                if (pacienteEditando) {
+                    // Atualizar
+                    response = await fetch(`/api/pacientes/${pacienteEditando.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(pacienteData)
+                    });
+                } else {
+                    // Criar novo
+                    response = await fetch('/api/pacientes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(pacienteData)
+                    });
+                }
+                
+                if (response.ok) {
+                    alert(pacienteEditando ? 'Paciente atualizado com sucesso!' : 'Paciente cadastrado com sucesso!');
+                    fecharModalPaciente();
+                    carregarPacientes();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao salvar paciente'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        function confirmarExclusaoPaciente(id, nome) {
+            acaoConfirmacao = () => excluirPaciente(id);
+            dadosConfirmacao = { id, nome };
+            document.getElementById('mensagem-confirmacao').textContent = 
+                `Tem certeza que deseja excluir o paciente "${nome}"? Esta ação não pode ser desfeita.`;
+            document.getElementById('modal-confirmacao').classList.add('active');
+        }
+
+        async function excluirPaciente(id) {
+            try {
+                const response = await fetch(`/api/pacientes/${id}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    alert('Paciente excluído com sucesso!');
+                    carregarPacientes();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao excluir paciente'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        function fecharModalPaciente() {
+            document.getElementById('modal-paciente').classList.remove('active');
+            pacienteEditando = null;
+        }
+
+        // ========== RECEBIMENTOS ==========
+
+        async function carregarRecebimentos() {
+            try {
+                const response = await fetch('/api/recebimentos');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    recebimentos = data;
+                    renderizarRecebimentos(data);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar recebimentos:', error);
+            }
+        }
+
+        function renderizarRecebimentos(listaRecebimentos) {
+            const tbody = document.getElementById('tabela-recebimentos');
+            
+            if (listaRecebimentos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum recebimento encontrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = listaRecebimentos.map(recebimento => `
+                <tr>
+                    <td>${formatarData(recebimento.data)}</td>
+                    <td>${recebimento.pacienteNome}</td>
+                    <td>R$ ${recebimento.valor.toFixed(2).replace('.', ',')}</td>
+                    <td>
+                        <span class="badge ${recebimento.status === 'pago' ? 'badge-success' : 'badge-warning'}">
+                            ${recebimento.status === 'pago' ? 'Pago' : 'Pendente'}
+                        </span>
+                    </td>
+                    <td>${recebimento.observacao || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button onclick="editarRecebimento(${recebimento.id})" class="btn-icon btn-edit" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="alterarStatusRecebimento(${recebimento.id}, '${recebimento.status}')" class="btn-icon ${recebimento.status === 'pago' ? 'btn-warning' : 'btn-success'}" title="${recebimento.status === 'pago' ? 'Marcar como Pendente' : 'Marcar como Pago'}">
+                                <i class="fas ${recebimento.status === 'pago' ? 'fa-clock' : 'fa-check'}"></i>
+                            </button>
+                            <button onclick="confirmarExclusaoRecebimento(${recebimento.id})" class="btn-icon btn-delete" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filtrarRecebimentos() {
+            // Esta função será implementada com filtros reais
+            carregarRecebimentos();
+        }
+
+        function novoRecebimento() {
+            recebimentoEditando = null;
+            document.getElementById('modal-recebimento-titulo').textContent = 'Novo Recebimento';
+            document.getElementById('form-recebimento').reset();
+            
+            // Definir data atual
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('recebimento-data').value = hoje;
+            
+            document.getElementById('modal-recebimento').classList.add('active');
+        }
+
+        function editarRecebimento(id) {
+            const recebimento = recebimentos.find(r => r.id === id);
+            if (!recebimento) return;
+            
+            recebimentoEditando = recebimento;
+            document.getElementById('modal-recebimento-titulo').textContent = 'Editar Recebimento';
+            
+            // Preencher formulário
+            document.getElementById('recebimento-paciente').value = recebimento.pacienteId;
+            document.getElementById('recebimento-valor').value = recebimento.valor;
+            document.getElementById('recebimento-data').value = recebimento.data;
+            document.getElementById('recebimento-tipo').value = recebimento.tipo || 'consulta';
+            document.getElementById('recebimento-status').value = recebimento.status;
+            document.getElementById('recebimento-observacao').value = recebimento.observacao || '';
+            
+            document.getElementById('modal-recebimento').classList.add('active');
+        }
+
+        async function salvarRecebimento(event) {
+            event.preventDefault();
+            
+            const recebimentoData = {
+                pacienteId: parseInt(document.getElementById('recebimento-paciente').value),
+                valor: parseFloat(document.getElementById('recebimento-valor').value),
+                data: document.getElementById('recebimento-data').value,
+                tipo: document.getElementById('recebimento-tipo').value,
+                status: document.getElementById('recebimento-status').value,
+                observacao: document.getElementById('recebimento-observacao').value
+            };
+            
+            try {
+                let response;
+                if (recebimentoEditando) {
+                    // Atualizar
+                    response = await fetch(`/api/recebimentos/${recebimentoEditando.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recebimentoData)
+                    });
+                } else {
+                    // Criar novo
+                    response = await fetch('/api/recebimentos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recebimentoData)
+                    });
+                }
+                
+                if (response.ok) {
+                    alert(recebimentoEditando ? 'Recebimento atualizado com sucesso!' : 'Recebimento cadastrado com sucesso!');
+                    fecharModalRecebimento();
+                    carregarRecebimentos();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao salvar recebimento'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        async function alterarStatusRecebimento(id, statusAtual) {
+            const novoStatus = statusAtual === 'pago' ? 'pendente' : 'pago';
+            
+            try {
+                const response = await fetch(`/api/recebimentos/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: novoStatus })
+                });
+                
+                if (response.ok) {
+                    alert(`Status alterado para ${novoStatus === 'pago' ? 'Pago' : 'Pendente'}`);
+                    carregarRecebimentos();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao alterar status'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        function confirmarExclusaoRecebimento(id) {
+            const recebimento = recebimentos.find(r => r.id === id);
+            if (!recebimento) return;
+            
+            acaoConfirmacao = () => excluirRecebimento(id);
+            dadosConfirmacao = { id };
+            document.getElementById('mensagem-confirmacao').textContent = 
+                `Tem certeza que deseja excluir o recebimento de ${recebimento.pacienteNome} no valor de R$ ${recebimento.valor.toFixed(2)}?`;
+            document.getElementById('modal-confirmacao').classList.add('active');
+        }
+
+        async function excluirRecebimento(id) {
+            try {
+                const response = await fetch(`/api/recebimentos/${id}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    alert('Recebimento excluído com sucesso!');
+                    carregarRecebimentos();
+                    carregarDashboard();
+                } else {
+                    const error = await response.json();
+                    alert(`Erro: ${error.error || 'Falha ao excluir recebimento'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor');
+            }
+        }
+
+        function fecharModalRecebimento() {
+            document.getElementById('modal-recebimento').classList.remove('active');
+            recebimentoEditando = null;
+        }
+
+        // ========== RELATÓRIOS ==========
+
+        function mostrarCamposRelatorio() {
+            const tipo = document.getElementById('tipo-relatorio').value;
+            
+            // Esconder todos os campos
+            document.getElementById('campo-mes').style.display = 'none';
+            document.getElementById('campo-ano').style.display = 'none';
+            document.getElementById('campo-paciente').style.display = 'none';
+            document.getElementById('campo-periodo').style.display = 'none';
+            
+            // Mostrar campos específicos
+            if (tipo === 'mensal') {
+                document.getElementById('campo-mes').style.display = 'block';
+                document.getElementById('campo-ano').style.display = 'block';
+            } else if (tipo === 'anual') {
+                document.getElementById('campo-ano').style.display = 'block';
+            } else if (tipo === 'paciente') {
+                document.getElementById('campo-paciente').style.display = 'block';
+            } else if (tipo === 'periodo') {
+                document.getElementById('campo-periodo').style.display = 'block';
+            }
         }
 
         function gerarRelatorio() {
-            alert('Relatório gerado com sucesso! Esta funcionalidade será implementada na versão completa.');
+            const tipo = document.getElementById('tipo-relatorio').value;
+            let titulo = '';
+            let dados = [];
+            
+            // Simulação de dados do relatório
+            switch(tipo) {
+                case 'mensal':
+                    const mes = document.getElementById('mes-relatorio').value;
+                    const ano = document.getElementById('ano-relatorio').value;
+                    titulo = `Relatório Mensal - ${getNomeMes(mes)}/${ano}`;
+                    dados = gerarDadosRelatorioMensal(mes, ano);
+                    break;
+                case 'anual':
+                    const anoRel = document.getElementById('ano-relatorio').value;
+                    titulo = `Relatório Anual - ${anoRel}`;
+                    dados = gerarDadosRelatorioAnual(anoRel);
+                    break;
+                case 'paciente':
+                    const pacienteId = document.getElementById('paciente-relatorio').value;
+                    titulo = 'Relatório por Paciente';
+                    dados = gerarDadosRelatorioPaciente(pacienteId);
+                    break;
+                case 'periodo':
+                    const inicio = document.getElementById('periodo-inicio').value;
+                    const fim = document.getElementById('periodo-fim').value;
+                    titulo = `Relatório Período ${formatarData(inicio)} a ${formatarData(fim)}`;
+                    dados = gerarDadosRelatorioPeriodo(inicio, fim);
+                    break;
+            }
+            
+            exibirRelatorio(titulo, dados);
         }
 
-        // Inicializar
-        window.onload = function() {
-            if (window.location.hash === '#login') {
-                logout();
+        function exibirRelatorio(titulo, dados) {
+            const container = document.getElementById('resultado-relatorio');
+            container.style.display = 'block';
+            
+            let html = `
+                <h4>${titulo}</h4>
+                <div class="table-container" style="margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Quantidade</th>
+                                <th>Média</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            dados.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.descricao}</td>
+                        <td>R$ ${item.valor.toFixed(2).replace('.', ',')}</td>
+                        <td>${item.quantidade}</td>
+                        <td>R$ ${item.media.toFixed(2).replace('.', ',')}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <strong>Total Geral:</strong> R$ ${dados.reduce((sum, item) => sum + item.valor, 0).toFixed(2).replace('.', ',')}
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            
+            // Atualizar gráficos
+            atualizarGraficos(dados);
+        }
+
+        function atualizarGraficos(dados) {
+            const container = document.getElementById('graficos-container');
+            
+            // Simulação de gráfico
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f0f0f0;">
+                        <h5 style="margin-bottom: 15px;">Distribuição por Status</h5>
+                        <div style="height: 200px; display: flex; align-items: flex-end; gap: 20px; justify-content: center;">
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 150px; background: #28a745; border-radius: 5px;"></div>
+                                <div style="margin-top: 10px;">Pagos (70%)</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 50px; background: #ffc107; border-radius: 5px;"></div>
+                                <div style="margin-top: 10px;">Pendentes (30%)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f0f0f0;">
+                        <h5 style="margin-bottom: 15px;">Evolução Mensal</h5>
+                        <div style="height: 200px; display: flex; align-items: flex-end; gap: 10px; justify-content: center;">
+                            ${[120, 180, 150, 200, 220, 180].map((altura, i) => `
+                                <div style="text-align: center;">
+                                    <div style="width: 30px; height: ${altura}px; background: #667eea; border-radius: 3px;"></div>
+                                    <div style="margin-top: 10px; font-size: 12px;">Mês ${i + 1}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportarParaExcel() {
+            alert('Esta funcionalidade exportará os dados para Excel. Em produção, isso geraria um arquivo .xlsx para download.');
+        }
+
+        function imprimirRelatorio() {
+            window.print();
+        }
+
+        // ========== IMPORTAR EXCEL ==========
+
+        function processarArquivoSelecionado() {
+            const fileInput = document.getElementById('file-excel');
+            if (!fileInput.files.length) return;
+            
+            const file = fileInput.files[0];
+            document.getElementById('nome-arquivo-selecionado').textContent = 
+                `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            document.getElementById('info-arquivo').style.display = 'block';
+        }
+
+        function iniciarImportacao() {
+            const fileInput = document.getElementById('file-excel');
+            if (!fileInput.files.length) {
+                alert('Selecione um arquivo primeiro!');
+                return;
             }
-        };
+            
+            const file = fileInput.files[0];
+            
+            document.getElementById('status-importacao').style.display = 'block';
+            document.getElementById('status-importacao').innerHTML = `
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <h4><i class="fas fa-sync-alt fa-spin"></i> Processando arquivo...</h4>
+                    <p>Arquivo: ${file.name}</p>
+                    <div style="margin-top: 10px;">
+                        <div style="height: 4px; background: #dee2e6; border-radius: 2px; overflow: hidden;">
+                            <div id="progresso-importacao" style="height: 100%; background: #28a745; width: 0%; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Simulação de processamento
+            let progresso = 0;
+            const intervalo = setInterval(() => {
+                progresso += 10;
+                document.getElementById('progresso-importacao').style.width = `${progresso}%`;
+                
+                if (progresso >= 100) {
+                    clearInterval(intervalo);
+                    setTimeout(() => {
+                        document.getElementById('status-importacao').innerHTML = `
+                            <div style="background: #d4edda; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                                <h4><i class="fas fa-check-circle"></i> Importação concluída!</h4>
+                                <p>Arquivo processado com sucesso.</p>
+                                <p>Foram importados 42 pacientes e 156 recebimentos.</p>
+                                <button onclick="carregarDadosIniciais()" class="btn-primary" style="margin-top: 10px;">
+                                    <i class="fas fa-sync"></i> Atualizar Dados
+                                </button>
+                            </div>
+                        `;
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        function cancelarImportacao() {
+            document.getElementById('file-excel').value = '';
+            document.getElementById('info-arquivo').style.display = 'none';
+            document.getElementById('status-importacao').style.display = 'none';
+        }
+
+        function mostrarImportacao() {
+            showSection('importar');
+        }
+
+        // ========== FUNÇÕES AUXILIARES ==========
+
+        function formatarData(dataString) {
+            if (!dataString) return 'N/A';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function getNomeMes(numeroMes) {
+            const meses = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            return meses[parseInt(numeroMes) - 1] || '';
+        }
+
+        function atualizarSelectPacientes(listaPacientes) {
+            const selectPaciente = document.getElementById('recebimento-paciente');
+            const selectPacienteRel = document.getElementById('paciente-relatorio');
+            const selectFiltroPaciente = document.getElementById('filtro-paciente-recebimento');
+            
+            // Limpar opções exceto a primeira
+            [selectPaciente, selectPacienteRel, selectFiltroPaciente].forEach(select => {
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+            });
+            
+            // Adicionar opções
+            listaPacientes.forEach(paciente => {
+                [selectPaciente, selectPacienteRel].forEach(select => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.codigo} - ${paciente.nome}`;
+                    select.appendChild(option);
+                });
+                
+                // Para o filtro, usar apenas nome
+                const optionFiltro = document.createElement('option');
+                optionFiltro.value = paciente.id;
+                optionFiltro.textContent = paciente.nome;
+                selectFiltroPaciente.appendChild(optionFiltro);
+            });
+        }
+
+        function confirmarAcao() {
+            if (acaoConfirmacao) {
+                acaoConfirmacao();
+            }
+            fecharModalConfirmacao();
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modal-confirmacao').classList.remove('active');
+            acaoConfirmacao = null;
+            dadosConfirmacao = null;
+        }
+
+        function fecharModalRelatorio() {
+            document.getElementById('modal-relatorio').classList.remove('active');
+        }
+
+        function gerarRelatorioMensal() {
+            showSection('relatorios');
+            document.getElementById('tipo-relatorio').value = 'mensal';
+            mostrarCamposRelatorio();
+            
+            // Definir mês atual
+            const hoje = new Date();
+            document.getElementById('mes-relatorio').value = hoje.getMonth() + 1;
+            document.getElementById('ano-relatorio').value = hoje.getFullYear();
+        }
+
+        // Funções de simulação de dados (para quando a API não está disponível)
+        function usarDadosExemplo() {
+            pacientes = [
+                { id: 1, codigo: '001', nome: 'João Silva', telefone: '(11) 99999-9999', totalRecebido: 1250, status: 'ativo' },
+                { id: 2, codigo: '002', nome: 'Maria Santos', telefone: '(11) 88888-8888', totalRecebido: 980, status: 'ativo' },
+                { id: 3, codigo: '003', nome: 'Carlos Oliveira', telefone: '(11) 77777-7777', totalRecebido: 1520, status: 'ativo' },
+            ];
+            
+            recebimentos = [
+                { id: 1, pacienteId: 1, pacienteNome: 'João Silva', valor: 150, data: '2024-01-15', status: 'pago', observacao: 'Consulta' },
+                { id: 2, pacienteId: 2, pacienteNome: 'Maria Santos', valor: 200, data: '2024-01-14', status: 'pendente', observacao: 'Exames' },
+                { id: 3, pacienteId: 3, pacienteNome: 'Carlos Oliveira', valor: 180, data: '2024-01-13', status: 'pago', observacao: 'Retorno' },
+            ];
+            
+            const dadosDashboard = {
+                metricas: {
+                    totalRecebido: 1250 + 180,
+                    totalAberto: 200,
+                    totalPacientes: 3,
+                    taxaPagamento: '66.7'
+                },
+                ultimosRecebimentos: recebimentos,
+                pacientesTop: pacientes
+            };
+            
+            atualizarDashboard(dadosDashboard);
+            renderizarPacientes(pacientes);
+            renderizarRecebimentos(recebimentos);
+            atualizarSelectPacientes(pacientes);
+        }
+
+        function gerarDadosRelatorioMensal(mes, ano) {
+            return [
+                { descricao: 'Consultas', valor: 12500, quantidade: 50, media: 250 },
+                { descricao: 'Exames', valor: 8500, quantidade: 25, media: 340 },
+                { descricao: 'Cirurgias', valor: 22000, quantidade: 8, media: 2750 },
+                { descricao: 'Retornos', valor: 3200, quantidade: 40, media: 80 }
+            ];
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data atual nos campos de data
+            const hoje = new Date().toISOString().split('T')[0];
+            const inicioMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+            
+            document.getElementById('data-inicio').value = inicioMes;
+            document.getElementById('data-fim').value = hoje;
+            document.getElementById('periodo-inicio').value = inicioMes;
+            document.getElementById('periodo-fim').value = hoje;
+            
+            // Definir ano atual
+            document.getElementById('ano-relatorio').value = new Date().getFullYear();
+            document.getElementById('mes-relatorio').value = new Date().getMonth() + 1;
+            
+            mostrarCamposRelatorio();
+        });
+
+        // Tornar funções disponíveis globalmente
+        window.login = login;
+        window.logout = logout;
+        window.showSection = showSection;
+        window.novoPaciente = novoPaciente;
+        window.novoRecebimento = novoRecebimento;
+        window.gerarRelatorioMensal = gerarRelatorioMensal;
+        window.mostrarImportacao = mostrarImportacao;
+        window.gerarRelatorio = gerarRelatorio;
+        window.exportarParaExcel = exportarParaExcel;
+        window.imprimirRelatorio = imprimirRelatorio;
+        window.mostrarCamposRelatorio = mostrarCamposRelatorio;
+        window.processarArquivoSelecionado = processarArquivoSelecionado;
+        window.iniciarImportacao = iniciarImportacao;
+        window.cancelarImportacao = cancelarImportacao;
+        window.fecharModalPaciente = fecharModalPaciente;
+        window.fecharModalRecebimento = fecharModalRecebimento;
+        window.confirmarAcao = confirmarAcao;
+        window.fecharModalConfirmacao = fecharModalConfirmacao;
     </script>
 </body>
 </html>
