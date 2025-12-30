@@ -1151,16 +1151,17 @@
             <form id="form-paciente" onsubmit="salvarPaciente(event)">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label><i class="fas fa-id-card"></i> Código *</label>
-                        <input type="text" id="paciente-codigo" class="form-control" required>
+                        <label><i class="fas fa-hashtag"></i> Código</label>
+                        <input type="text" id="paciente-codigo" class="form-control" readonly style="background-color: #f8f9fa;">
+                        <small class="form-text text-muted">Gerado automaticamente</small>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-user"></i> Nome Completo *</label>
                         <input type="text" id="paciente-nome" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label><i class="fas fa-phone"></i> Telefone</label>
-                        <input type="tel" id="paciente-telefone" class="form-control" placeholder="(11) 99999-9999">
+                        <label><i class="fas fa-phone"></i> Telefone *</label>
+                        <input type="tel" id="paciente-telefone" class="form-control" placeholder="(11) 99999-9999" required>
                     </div>
                     <div class="form-group">
                         <label><i class="fas fa-envelope"></i> E-mail</label>
@@ -1300,6 +1301,7 @@
         let dadosConfirmacao = null;
         let pacienteEditando = null;
         let recebimentoEditando = null;
+        let proximoCodigo = '001';
 
         // ========== FUNÇÕES PRINCIPAIS ==========
 
@@ -1496,11 +1498,34 @@
             renderizarPacientes(pacientesFiltrados);
         }
 
-        function novoPaciente() {
-            pacienteEditando = null;
-            document.getElementById('modal-paciente-titulo').textContent = 'Novo Paciente';
-            document.getElementById('form-paciente').reset();
-            document.getElementById('modal-paciente').classList.add('active');
+        async function novoPaciente() {
+            try {
+                // Buscar próximo código do servidor
+                const response = await fetch('/api/proximo-codigo');
+                const data = await response.json();
+                proximoCodigo = data.proximoCodigo;
+                
+                pacienteEditando = null;
+                document.getElementById('modal-paciente-titulo').textContent = 'Novo Paciente';
+                document.getElementById('form-paciente').reset();
+                
+                // Definir código automaticamente
+                document.getElementById('paciente-codigo').value = proximoCodigo;
+                
+                document.getElementById('modal-paciente').classList.add('active');
+            } catch (error) {
+                console.error('Erro ao buscar próximo código:', error);
+                // Fallback: usar sequência local
+                const ultimoCodigo = pacientes.length > 0 ? 
+                    Math.max(...pacientes.map(p => parseInt(p.codigo))) : 0;
+                proximoCodigo = (ultimoCodigo + 1).toString().padStart(3, '0');
+                
+                pacienteEditando = null;
+                document.getElementById('modal-paciente-titulo').textContent = 'Novo Paciente';
+                document.getElementById('form-paciente').reset();
+                document.getElementById('paciente-codigo').value = proximoCodigo;
+                document.getElementById('modal-paciente').classList.add('active');
+            }
         }
 
         function editarPaciente(id) {
@@ -1508,10 +1533,10 @@
             if (!paciente) return;
             
             pacienteEditando = paciente;
-            document.getElementById('modal-paciente-titulo').textContent = 'Editar Paciente';
+            document.getElementById('modal-paciente-titulo').textContent = `Editar Paciente - ${paciente.codigo}`;
             
             // Preencher formulário
-            document.getElementById('paciente-codigo').value = paciente.codigo || '';
+            document.getElementById('paciente-codigo').value = paciente.codigo;
             document.getElementById('paciente-nome').value = paciente.nome;
             document.getElementById('paciente-telefone').value = paciente.telefone || '';
             document.getElementById('paciente-email').value = paciente.email || '';
@@ -1532,6 +1557,7 @@
                   `Nome: ${paciente.nome}\n` +
                   `Telefone: ${paciente.telefone || 'Não informado'}\n` +
                   `E-mail: ${paciente.email || 'Não informado'}\n` +
+                  `Endereço: ${paciente.endereco || 'Não informado'}\n` +
                   `Total Gasto: R$ ${(paciente.totalRecebido || 0).toFixed(2)}\n` +
                   `Status: ${paciente.status === 'ativo' ? 'Ativo' : 'Inativo'}\n` +
                   `Data de Cadastro: ${paciente.dataCadastro || 'N/A'}`);
@@ -1541,7 +1567,6 @@
             event.preventDefault();
             
             const pacienteData = {
-                codigo: document.getElementById('paciente-codigo').value,
                 nome: document.getElementById('paciente-nome').value,
                 telefone: document.getElementById('paciente-telefone').value,
                 email: document.getElementById('paciente-email').value,
@@ -1549,19 +1574,20 @@
                 dataNascimento: document.getElementById('paciente-nascimento').value,
                 observacoes: document.getElementById('paciente-observacoes').value,
                 status: document.getElementById('paciente-status').value
+                // NÃO enviar código - será gerado pelo backend
             };
             
             try {
                 let response;
                 if (pacienteEditando) {
-                    // Atualizar
+                    // Atualizar - agora o código vem do pacienteEditando
                     response = await fetch(`/api/pacientes/${pacienteEditando.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(pacienteData)
                     });
                 } else {
-                    // Criar novo
+                    // Criar novo - o backend gera o código
                     response = await fetch('/api/pacientes', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1570,7 +1596,10 @@
                 }
                 
                 if (response.ok) {
-                    alert(pacienteEditando ? 'Paciente atualizado com sucesso!' : 'Paciente cadastrado com sucesso!');
+                    const resultado = await response.json();
+                    const codigoGerado = resultado.codigo || proximoCodigo;
+                    alert(pacienteEditando ? 'Paciente atualizado com sucesso!' : 
+                          `Paciente cadastrado com código ${codigoGerado}!`);
                     fecharModalPaciente();
                     carregarPacientes();
                     carregarDashboard();
@@ -2064,6 +2093,17 @@
             });
         }
 
+        async function carregarProximoCodigo() {
+            try {
+                const response = await fetch('/api/proximo-codigo');
+                const data = await response.json();
+                return data.proximoCodigo;
+            } catch (error) {
+                console.error('Erro ao carregar próximo código:', error);
+                return null;
+            }
+        }
+
         function confirmarAcao() {
             if (acaoConfirmacao) {
                 acaoConfirmacao();
@@ -2101,9 +2141,9 @@
             ];
             
             recebimentos = [
-                { id: 1, pacienteId: 1, pacienteNome: 'João Silva', valor: 150, data: '2024-01-15', status: 'pago', observacao: 'Consulta' },
-                { id: 2, pacienteId: 2, pacienteNome: 'Maria Santos', valor: 200, data: '2024-01-14', status: 'pendente', observacao: 'Exames' },
-                { id: 3, pacienteId: 3, pacienteNome: 'Carlos Oliveira', valor: 180, data: '2024-01-13', status: 'pago', observacao: 'Retorno' },
+                { id: 1, pacienteId: 1, pacienteNome: 'João Silva', pacienteCodigo: '001', valor: 150, data: '2024-01-15', status: 'pago', observacao: 'Consulta' },
+                { id: 2, pacienteId: 2, pacienteNome: 'Maria Santos', pacienteCodigo: '002', valor: 200, data: '2024-01-14', status: 'pendente', observacao: 'Exames' },
+                { id: 3, pacienteId: 3, pacienteNome: 'Carlos Oliveira', pacienteCodigo: '003', valor: 180, data: '2024-01-13', status: 'pago', observacao: 'Retorno' },
             ];
             
             const dadosDashboard = {
@@ -2129,6 +2169,30 @@
                 { descricao: 'Exames', valor: 8500, quantidade: 25, media: 340 },
                 { descricao: 'Cirurgias', valor: 22000, quantidade: 8, media: 2750 },
                 { descricao: 'Retornos', valor: 3200, quantidade: 40, media: 80 }
+            ];
+        }
+
+        function gerarDadosRelatorioAnual(ano) {
+            return [
+                { descricao: 'Consultas', valor: 85000, quantidade: 340, media: 250 },
+                { descricao: 'Exames', valor: 45000, quantidade: 150, media: 300 },
+                { descricao: 'Cirurgias', valor: 120000, quantidade: 40, media: 3000 }
+            ];
+        }
+
+        function gerarDadosRelatorioPaciente(pacienteId) {
+            return [
+                { descricao: 'Consultas', valor: 1250, quantidade: 5, media: 250 },
+                { descricao: 'Exames', valor: 850, quantidade: 2, media: 425 },
+                { descricao: 'Retornos', valor: 320, quantidade: 4, media: 80 }
+            ];
+        }
+
+        function gerarDadosRelatorioPeriodo(inicio, fim) {
+            return [
+                { descricao: 'Consultas', valor: 3250, quantidade: 13, media: 250 },
+                { descricao: 'Exames', valor: 1850, quantidade: 5, media: 370 },
+                { descricao: 'Cirurgias', valor: 6000, quantidade: 2, media: 3000 }
             ];
         }
 
