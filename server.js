@@ -183,6 +183,11 @@ function atualizarTotalPaciente(pacienteId, valor, operacao = 'adicionar') {
     }
 }
 
+function formatarDataBR(dataString) {
+    const data = new Date(dataString);
+    return data.toLocaleDateString('pt-BR');
+}
+
 // ========== ROTAS DA API ==========
 
 // 1. HEALTH CHECK
@@ -545,4 +550,48 @@ app.get('/api/relatorios', (req, res) => {
     // Agrupar por paciente (top 5)
     const porPaciente = recebimentosFiltrados.reduce((acc, r) => {
         if (!acc[r.pacienteNome]) {
-            acc[r.pacienteNome] = { total: 0, quantidade: 
+            acc[r.pacienteNome] = { total: 0, quantidade: 0 };
+        }
+        acc[r.pacienteNome].total += r.valor;
+        acc[r.pacienteNome].quantidade += 1;
+        return acc;
+    }, {});
+    
+    // Converter para array e ordenar
+    const topPacientes = Object.entries(porPaciente)
+        .map(([nome, dados]) => ({ nome, ...dados }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5);
+    
+    res.json({
+        titulo,
+        periodo,
+        estatisticas: {
+            totalRecebido,
+            totalAberto,
+            totalRegistros: recebimentosFiltrados.length,
+            quantidadePagos: recebimentosFiltrados.filter(r => r.status === 'pago').length,
+            quantidadePendentes: recebimentosFiltrados.filter(r => r.status === 'pendente').length
+        },
+        detalhes: {
+            porTipo,
+            porStatus,
+            topPacientes
+        },
+        registros: recebimentosFiltrados
+    });
+});
+
+// 6. ROTA PARA SERVIDOR ESTÁTICO (FRONTEND)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ========== INICIAR SERVIDOR ==========
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`URL: http://localhost:${PORT}`);
+    console.log(`API Health: http://localhost:${PORT}/api/health`);
+});
