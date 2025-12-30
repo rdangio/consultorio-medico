@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Consultório Financeiro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Tela de Login */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 60px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-info {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Tela Principal */
+        #main-screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-small {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-small i {
+            font-size: 30px;
+        }
+
+        .logo-small h2 {
+            font-size: 22px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+
+        .sidebar li:hover {
+            background: #e9ecef;
+            color: #667eea;
+        }
+
+        .sidebar li.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .metric-icon.total { background: #e3f2fd; color: #1976d2; }
+        .metric-icon.pending { background: #fff3e0; color: #f57c00; }
+        .metric-icon.patients { background: #e8f5e9; color: #388e3c; }
+        .metric-icon.rate { background: #f3e5f5; color: #7b1fa2; }
+
+        .metric-info h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            color: #4caf50;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 2px solid #eee;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.pago {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status.pendente {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .quick-actions {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .action-btn i {
+            font-size: 24px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="logo">
+                <i class="fas fa-hospital-alt"></i>
+                <h1>Consultório Financeiro</h1>
+                <p>Controle de Recebimentos e Pacientes</p>
+            </div>
+            
+            <div class="input-group">
+                <label for="username"><i class="fas fa-user"></i> Usuário</label>
+                <input type="text" id="username" placeholder="Digite seu usuário" value="admin">
+            </div>
+            
+            <div class="input-group">
+                <label for="password"><i class="fas fa-lock"></i> Senha</label>
+                <input type="password" id="password" placeholder="Digite sua senha" value="admin">
+            </div>
+            
+            <button onclick="login()" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
+            </button>
+            
+            <p class="demo-info">
+                <i class="fas fa-info-circle"></i> Use: admin / admin
+            </p>
+        </div>
+    </div>
+
+    <!-- Tela Principal -->
+    <div id="main-screen" class="screen">
+        <header class="header">
+            <div class="logo-small">
+                <i class="fas fa-hospital-alt"></i>
+                <h2>Consultório Financeiro</h2>
+            </div>
+            
+            <div class="user-info">
+                <i class="fas fa-user-md"></i>
+                <span>Administrador</span>
+                <button onclick="logout()" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </header>
+        
+        <div class="container">
+            <nav class="sidebar">
+                <ul>
+                    <li class="active" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </li>
+                    <li onclick="showSection('pacientes')">
+                        <i class="fas fa-users"></i> Pacientes
+                    </li>
+                    <li onclick="showSection('recebimentos')">
+                        <i class="fas fa-money-bill-wave"></i> Recebimentos
+                    </li>
+                    <li onclick="showSection('relatorios')">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </li>
+                    <li onclick="showSection('importar')">
+                        <i class="fas fa-file-import"></i> Importar Excel
+                    </li>
+                </ul>
+            </nav>
+            
+            <main class="content">
+                <!-- Dashboard -->
+                <section id="dashboard-section" class="section active">
+                    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon total">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>Total Recebido</h3>
+                                <p class="metric-value" id="total-recebido">R$ 12.847,50</p>
+                                <p class="metric-change">+5% este mês</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon pending">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>Em Aberto</h3>
+                                <p class="metric-value" id="total-aberto">R$ 3.125,00</p>
+                                <p class="metric-change">8 recebimentos</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon patients">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>Pacientes Ativos</h3>
+                                <p class="metric-value" id="total-pacientes">42</p>
+                                <p class="metric-change">+2 este mês</p>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-icon rate">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h3>Taxa de Pagamento</h3>
+                                <p class="metric-value" id="taxa-pagamento">86%</p>
+                                <p class="metric-change">Excelente</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <h3><i class="fas fa-history"></i> Últimos Recebimentos</h3>
+                            <div style="overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Paciente</th>
+                                            <th>Valor</th>
+                                            <th>Data</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ultimos-recebimentos">
+                                        <!-- JavaScript preenche -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h3><i class="fas fa-user-friends"></i> Pacientes Recentes</h3>
+                            <div style="overflow-x: auto;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Total Gasto</th>
+                                            <th>Última Visita</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pacientes-recentes">
+                                        <!-- JavaScript preenche -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3><i class="fas fa-bolt"></i> Ações Rápidas</h3>
+                        <div class="actions-grid">
+                            <button onclick="showSection('pacientes')" class="action-btn">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Novo Paciente</span>
+                            </button>
+                            <button onclick="showSection('recebimentos')" class="action-btn">
+                                <i class="fas fa-money-bill"></i>
+                                <span>Novo Recebimento</span>
+                            </button>
+                            <button onclick="showSection('importar')" class="action-btn">
+                                <i class="fas fa-file-import"></i>
+                                <span>Importar Excel</span>
+                            </button>
+                            <button onclick="gerarRelatorio()" class="action-btn">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Gerar Relatório</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Outras seções serão adicionadas aqui -->
+                <section id="pacientes-section" class="section">
+                    <h1><i class="fas fa-users"></i> Pacientes</h1>
+                    <p>Em construção...</p>
+                </section>
+                
+                <section id="recebimentos-section" class="section">
+                    <h1><i class="fas fa-money-bill-wave"></i> Recebimentos</h1>
+                    <p>Em construção...</p>
+                </section>
+                
+                <section id="relatorios-section" class="section">
+                    <h1><i class="fas fa-chart-bar"></i> Relatórios</h1>
+                    <p>Em construção...</p>
+                </section>
+                
+                <section id="importar-section" class="section">
+                    <h1><i class="fas fa-file-import"></i> Importar Excel</h1>
+                    <p>Em construção...</p>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo
+        const pacientesExemplo = [
+            { id: 1, nome: "João Silva", total: 1250, ultimaVisita: "15/01/2024" },
+            { id: 2, nome: "Maria Santos", total: 980, ultimaVisita: "14/01/2024" },
+            { id: 3, nome: "Carlos Oliveira", total: 1520, ultimaVisita: "13/01/2024" },
+            { id: 4, nome: "Ana Costa", total: 750, ultimaVisita: "12/01/2024" },
+            { id: 5, nome: "Pedro Alves", total: 2100, ultimaVisita: "11/01/2024" }
+        ];
+
+        const recebimentosExemplo = [
+            { id: 1, paciente: "João Silva", valor: 150, data: "15/01/2024", status: "pago" },
+            { id: 2, paciente: "Maria Santos", valor: 200, data: "14/01/2024", status: "pendente" },
+            { id: 3, paciente: "Carlos Oliveira", valor: 180, data: "13/01/2024", status: "pago" },
+            { id: 4, paciente: "Ana Costa", valor: 220, data: "12/01/2024", status: "pago" },
+            { id: 5, paciente: "Pedro Alves", valor: 300, data: "11/01/2024", status: "pendente" }
+        ];
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-screen').style.display = 'block';
+                atualizarDashboard();
+            } else {
+                alert('Usuário ou senha incorretos! Use: admin / admin');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-screen').style.display = 'none';
+        }
+
+        function showSection(sectionId) {
+            // Atualizar menu
+            document.querySelectorAll('.sidebar li').forEach(li => {
+                li.classList.remove('active');
+            });
+            event.target.closest('li').classList.add('active');
+            
+            // Mostrar seção
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${sectionId}-section`).classList.add('active');
+        }
+
+        function atualizarDashboard() {
+            // Calcular totais
+            let totalRecebido = 0;
+            let totalAberto = 0;
+            
+            recebimentosExemplo.forEach(r => {
+                if (r.status === 'pago') {
+                    totalRecebido += r.valor;
+                } else {
+                    totalAberto += r.valor;
+                }
+            });
+            
+            // Atualizar métricas
+            document.getElementById('total-recebido').textContent = 
+                `R$ ${totalRecebido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            
+            document.getElementById('total-aberto').textContent = 
+                `R$ ${totalAberto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            
+            document.getElementById('total-pacientes').textContent = pacientesExemplo.length;
+            
+            const taxaPagamento = recebimentosExemplo.length > 0 
+                ? ((recebimentosExemplo.filter(r => r.status === 'pago').length / recebimentosExemplo.length) * 100).toFixed(0)
+                : 0;
+            document.getElementById('taxa-pagamento').textContent = `${taxaPagamento}%`;
+            
+            // Atualizar tabela de recebimentos
+            const tabelaRecebimentos = document.getElementById('ultimos-recebimentos');
+            tabelaRecebimentos.innerHTML = recebimentosExemplo.map(r => `
+                <tr>
+                    <td>${r.paciente}</td>
+                    <td>R$ ${r.valor.toFixed(2).replace('.', ',')}</td>
+                    <td>${r.data}</td>
+                    <td><span class="status ${r.status}">${r.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+                </tr>
+            `).join('');
+            
+            // Atualizar tabela de pacientes
+            const tabelaPacientes = document.getElementById('pacientes-recentes');
+            tabelaPacientes.innerHTML = pacientesExemplo.map(p => `
+                <tr>
+                    <td>${p.nome}</td>
+                    <td>R$ ${p.total.toFixed(2).replace('.', ',')}</td>
+                    <td>${p.ultimaVisita}</td>
+                </tr>
+            `).join('');
+        }
+
+        function gerarRelatorio() {
+            alert('Relatório gerado com sucesso! Esta funcionalidade será implementada na versão completa.');
+        }
+
+        // Inicializar
+        window.onload = function() {
+            if (window.location.hash === '#login') {
+                logout();
+            }
+        };
+    </script>
+</body>
+</html>
